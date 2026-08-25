@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Category, MenuItem, Restaurant } from '../types'
 import { ProductCard } from '../components/ProductCard'
 import { Icon, CategoryIcon } from '../components/Icon'
-import { useHorizontalWheelScroll } from '../hooks/useHorizontalWheelScroll'
+import { HorizontalScroll } from '../components/HorizontalScroll'
 
 interface Props {
   restaurant: Restaurant
@@ -26,7 +26,6 @@ export function HomePage({
   isStaff,
 }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
-  const handleCategoryWheel = useHorizontalWheelScroll()
 
   const filtered = activeCategory === 'all'
     ? menu
@@ -65,8 +64,9 @@ export function HomePage({
         </span>
       </div>
 
-      <div className="categories-scroll hide-scrollbar" onWheel={handleCategoryWheel}>
+      <HorizontalScroll className="categories-scroll">
         <button
+          type="button"
           className={`cat-pill ${activeCategory === 'all' ? 'active' : ''}`}
           onClick={() => setActiveCategory('all')}
         >
@@ -75,6 +75,7 @@ export function HomePage({
         {categories.map((cat) => (
           <button
             key={cat.id}
+            type="button"
             className={`cat-pill ${activeCategory === cat.id ? 'active' : ''}`}
             onClick={() => setActiveCategory(cat.id)}
           >
@@ -82,7 +83,7 @@ export function HomePage({
             {cat.label}
           </button>
         ))}
-      </div>
+      </HorizontalScroll>
 
       <div className="products-grid">
         {filtered.map((item) => (
