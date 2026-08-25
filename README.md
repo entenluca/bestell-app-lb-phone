@@ -46,13 +46,17 @@ Moderne Food-Delivery-App für **LB Phone** (FiveM). Kunden bestellen Essen, Mit
    npm run build
    ```
 
-3. In `server.cfg` eintragen:
+3. In `server.cfg` eintragen (**lb-phone muss ZUERST starten**):
    ```
    ensure lb-phone
    ensure bestell-app-lb-phone
    ```
 
-4. Server neu starten – die App wird automatisch über `AddCustomApp` registriert.
+4. Server neu starten – die App erscheint **im LB Phone**, nicht als Vollbild-Overlay.
+
+> **Wichtig:** Die App hat bewusst **kein `ui_page`** in der `fxmanifest.lua`.
+> Mit `ui_page` würde die UI den ganzen Bildschirm überdecken statt im Handy zu erscheinen.
+> Die App öffnest du über das **LB Phone** → App „Alpp Food“.
 
 ## Konfiguration
 

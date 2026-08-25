@@ -12,7 +12,8 @@ local function sendAppMessage(action, data)
 end
 
 local function addApp()
-    local url = GetResourceMetadata(GetCurrentResourceName(), "ui_page", 0)
+    local resource = GetCurrentResourceName()
+    local uiPath = "ui/dist/index.html"
 
     local added, errorMessage = exports["lb-phone"]:AddCustomApp({
         identifier = identifier,
@@ -21,8 +22,8 @@ local function addApp()
         developer = Config.Developer,
         defaultApp = Config.DefaultApp,
         size = 245760,
-        ui = url:find("http") and url or GetCurrentResourceName() .. "/" .. url,
-        icon = "https://cfx-nui-" .. GetCurrentResourceName() .. "/ui/dist/icon.svg",
+        ui = resource .. "/" .. uiPath,
+        icon = "https://cfx-nui-" .. resource .. "/ui/dist/icon.svg",
         fixBlur = true,
     })
 

@@ -14,4 +14,6 @@ server_script "server/server.lua"
 
 file "ui/dist/**/*"
 
-ui_page "ui/dist/index.html"
+-- KEIN ui_page! Sonst wird die App fullscreen über den ganzen Bildschirm gelegt.
+-- Die UI wird nur über LB Phone AddCustomApp im Handy-iframe geladen.
+
