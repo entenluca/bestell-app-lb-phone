@@ -41,7 +41,9 @@ export function OrderCard({
       <div className="order-card-header">
         <div className="customer-order-meta">
           <span className="order-id">{order.id}</span>
-          <span className="order-time">{formatTime(order.createdAt)}</span>
+          <time className="order-time" dateTime={order.createdAt}>
+            {formatTime(order.createdAt)} Uhr
+          </time>
         </div>
         <span
           className="badge"
