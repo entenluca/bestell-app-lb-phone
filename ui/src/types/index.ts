@@ -119,8 +119,8 @@ export const STATUS_FLOW: OrderStatus[] = [
 ]
 
 export const CUSTOMER_STATUS_LABELS: Record<OrderStatus, string> = {
-  neu: 'Eingegangen',
-  in_bearbeitung: 'Zubereitung',
+  neu: 'Empfangen',
+  in_bearbeitung: 'Küche',
   bereit: 'Fertig',
   unterwegs: 'Unterwegs',
   ausgeliefert: 'Geliefert',

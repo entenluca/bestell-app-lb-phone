@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { OrderStatus } from '../types'
 import { CUSTOMER_STATUS_LABELS, STATUS_COLORS, STATUS_FLOW } from '../types'
 import { Icon } from './Icon'
@@ -40,6 +41,7 @@ export function OrderStatusTracker({ status }: Props) {
           <div
             key={step}
             className={`status-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}`}
+            style={{ '--step-color': color } as CSSProperties}
           >
             <div className="status-step-marker" style={{ borderColor: isDone || isActive ? color : undefined }}>
               <span style={{ color: isDone || isActive ? color : undefined }}>
@@ -47,12 +49,6 @@ export function OrderStatusTracker({ status }: Props) {
               </span>
             </div>
             <span className="status-step-label">{CUSTOMER_STATUS_LABELS[step]}</span>
-            {index < STATUS_FLOW.length - 1 && (
-              <div
-                className={`status-step-line ${index < currentIdx ? 'done' : ''}`}
-                style={{ background: index < currentIdx ? color : undefined }}
-              />
-            )}
           </div>
         )
       })}

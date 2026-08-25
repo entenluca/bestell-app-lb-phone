@@ -16,7 +16,7 @@ export function CustomerOrderCard({ order, paymentMethods }: Props) {
   return (
     <div className={`customer-order-card card fade-in ${isActive ? 'customer-order-active' : ''}`}>
       <div className="customer-order-header">
-        <div>
+        <div className="customer-order-meta">
           <span className="order-id">{order.id}</span>
           <span className="order-time">{formatTime(order.createdAt)}</span>
         </div>
