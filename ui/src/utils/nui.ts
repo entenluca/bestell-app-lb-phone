@@ -119,3 +119,7 @@ export function getResourceAssetUrl(path: string): string {
   const normalized = path.replace(/^\//, '')
   return `https://cfx-nui-${resource}/${normalized}`
 }
+
+export function sanitizePhoneNumber(value: string): string {
+  return value.replace(/\D/g, '')
+}

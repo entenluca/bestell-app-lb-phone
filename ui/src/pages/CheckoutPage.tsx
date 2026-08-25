@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { CartItem, DeliveryLocation, PaymentMethod, Restaurant } from '../types'
-import { fetchNui, formatPrice } from '../utils/nui'
+import { fetchNui, formatPrice, sanitizePhoneNumber } from '../utils/nui'
 import { PageHeader } from '../components/PageHeader'
 import { DeliveryMapPicker } from '../components/DeliveryMapPicker'
 import { Icon } from '../components/Icon'
@@ -72,11 +72,11 @@ export function CheckoutPage({
       const data = await fetchNui<{ phone?: string }>(
         'getPlayerPhone',
         {},
-        isBrowser ? { phone: '555-0123' } : undefined
+        isBrowser ? { phone: '5550123' } : undefined
       )
 
       if (data?.phone) {
-        setPhone(data.phone)
+        setPhone(sanitizePhoneNumber(data.phone))
       }
     }
 
@@ -171,10 +171,13 @@ export function CheckoutPage({
           <input
             id="phone"
             type="tel"
-            placeholder="555-0123"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="tel"
+            placeholder="5550123"
             value={phone}
             onChange={(e) => {
-              setPhone(e.target.value)
+              setPhone(sanitizePhoneNumber(e.target.value))
               clearError('phone')
             }}
             aria-invalid={!!errors.phone}
