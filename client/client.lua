@@ -89,22 +89,34 @@ end)
 RegisterNUICallback("getPlayerLocation", function(_, cb)
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
-    local streetHash, crossingHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
-    local street = GetStreetNameFromHashKey(streetHash)
-    local crossing = GetStreetNameFromHashKey(crossingHash)
 
-    local address = street
-    if crossing and crossing ~= "" then
-        address = street .. " / " .. crossing
+    local streetHash, crossingHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+    local street = GetStreetNameFromHashKey(streetHash) or ""
+    local crossing = GetStreetNameFromHashKey(crossingHash) or ""
+
+    local address = nil
+
+    if street ~= "" then
+        if crossing ~= "" then
+            address = street .. " / " .. crossing
+        else
+            address = street
+        end
     end
+
     if not address or address == "" then
-        address = string.format("Position (%.0f, %.0f)", coords.x, coords.y)
+        local zone = GetLabelText(GetNameOfZone(coords.x, coords.y, coords.z))
+        if zone and zone ~= "" and zone ~= "NULL" then
+            address = zone
+        else
+            address = string.format("Position (%.0f, %.0f)", coords.x, coords.y)
+        end
     end
 
     cb({
-        x = coords.x,
-        y = coords.y,
-        z = coords.z,
+        x = coords.x + 0.0,
+        y = coords.y + 0.0,
+        z = coords.z + 0.0,
         address = address,
     })
 end)

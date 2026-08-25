@@ -484,6 +484,37 @@ img {
 .delivery-address-icon { color: var(--primary); flex-shrink: 0; margin-top: 2px; }
 .delivery-address-card strong { display: block; font-size: 13px; }
 .delivery-address-card span { font-size: 11px; color: var(--text-secondary); }
+.delivery-address-empty {
+  border-style: dashed;
+  opacity: 0.85;
+}
+.delivery-address-updated {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(232, 93, 42, 0.25);
+}
+.location-btn-success {
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+.location-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+}
+.location-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.delivery-map-header {
+  flex-wrap: wrap;
+}
 
 /* Confirmation */
 .confirmation-page { display: flex; align-items: center; justify-content: center; min-height: 100%; padding: 24px; }

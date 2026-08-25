@@ -18,19 +18,27 @@ export async function fetchNui<T = unknown>(
     return {} as T
   }
 
-  if (typeof window.fetchNui === 'function') {
-    return window.fetchNui<T>(eventName, data, mockData)
-  }
-
   const resourceName = window.resourceName ?? 'bestell-app-lb-phone'
 
-  const resp = await fetch(`https://${resourceName}/${eventName}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-    body: JSON.stringify(data ?? {}),
-  })
+  try {
+    const resp = await fetch(`https://${resourceName}/${eventName}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify(data ?? {}),
+    })
 
-  return resp.json()
+    const result = await resp.json()
+    return result as T
+  } catch (error) {
+    console.error(`[Alpp Food] fetchNui "${eventName}" failed:`, error)
+
+    if (typeof window.fetchNui === 'function') {
+      return window.fetchNui<T>(eventName, data)
+    }
+
+    if (mockData !== undefined) return mockData
+    throw error
+  }
 }
 
 export function onNuiEvent<T>(action: string, handler: (data: T) => void) {
