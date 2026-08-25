@@ -90,7 +90,7 @@ export function waitForPhoneReady(): Promise<void> {
 }
 
 export function formatPrice(amount: number): string {
-  return amount.toFixed(2).replace('.', ',') + ' €'
+  return `${amount.toFixed(2).replace('.', ',')}\u00a0€`
 }
 
 export function formatTime(isoString: string): string {

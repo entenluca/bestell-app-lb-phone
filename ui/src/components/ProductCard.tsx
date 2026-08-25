@@ -18,9 +18,13 @@ export function ProductCard({ item, onAdd }: Props) {
         <p className="product-desc">{item.description}</p>
         <div className="product-footer">
           <span className="product-price">{formatPrice(item.price)}</span>
-          <button className="btn btn-primary btn-sm product-add-btn" onClick={() => onAdd(item)}>
-            <Icon name="plus" size={14} />
-            Hinzufügen
+          <button
+            type="button"
+            className="btn btn-primary btn-sm product-add-btn"
+            onClick={() => onAdd(item)}
+            aria-label={`${item.name} in den Warenkorb`}
+          >
+            <Icon name="plus" size={16} />
           </button>
         </div>
       </div>

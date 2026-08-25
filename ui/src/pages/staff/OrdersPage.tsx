@@ -3,6 +3,7 @@ import type { Order, OrderStatus, PaymentMethod } from '../../types'
 import { STATUS_LABELS } from '../../types'
 import { OrderCard } from '../../components/OrderCard'
 import { PageHeader } from '../../components/PageHeader'
+import { useHorizontalWheelScroll } from '../../hooks/useHorizontalWheelScroll'
 
 interface Props {
   orders: Order[]
@@ -28,6 +29,7 @@ export function OrdersPage({
   onMarkDelivery,
 }: Props) {
   const [filter, setFilter] = useState('active')
+  const handleFilterWheel = useHorizontalWheelScroll()
 
   const filtered = orders.filter((o) => {
     if (filter === 'all') return true
@@ -41,7 +43,7 @@ export function OrdersPage({
     <div className="orders-page fade-in">
       <PageHeader title="Bestellungen" />
 
-      <div className="filter-scroll">
+      <div className="filter-scroll hide-scrollbar" onWheel={handleFilterWheel}>
         {filters.map((f) => (
           <button
             key={f.id}
