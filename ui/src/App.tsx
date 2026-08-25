@@ -254,6 +254,11 @@ export default function App() {
     if (mode === 'staff') refreshOrders()
   }, [mode, staffView, refreshOrders])
 
+  const activeMyOrdersCount = useMemo(
+    () => myOrders.filter((o) => o.status !== 'ausgeliefert' && o.status !== 'storniert').length,
+    [myOrders]
+  )
+
   if (!initData) {
     return (
       <div className="app">
@@ -271,11 +276,6 @@ export default function App() {
       </div>
     )
   }
-
-  const activeMyOrdersCount = useMemo(
-    () => myOrders.filter((o) => o.status !== 'ausgeliefert' && o.status !== 'storniert').length,
-    [myOrders]
-  )
 
   const showCustomerNav = mode === 'customer' && (customerView === 'home' || customerView === 'orders')
   const hasBottomNav = showCustomerNav || mode === 'staff'
