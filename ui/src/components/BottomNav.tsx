@@ -8,22 +8,28 @@ interface Props {
 
 export function BottomNav({ items, active, onChange }: Props) {
   return (
-    <nav className="bottom-nav">
-      {items.map((item) => (
-        <button
-          key={item.id}
-          className={`nav-item ${active === item.id ? 'active' : ''}`}
-          onClick={() => onChange(item.id)}
-        >
-          <span className="nav-icon">
-            <Icon name={item.icon} size={22} />
-          </span>
-          <span>{item.label}</span>
-          {item.badge != null && item.badge > 0 && (
-            <span className="nav-badge">{item.badge}</span>
-          )}
-        </button>
-      ))}
+    <nav className="bottom-nav" aria-label="Navigation">
+      {items.map((item) => {
+        const isActive = active === item.id
+
+        return (
+          <button
+            key={item.id}
+            type="button"
+            className={`nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => onChange(item.id)}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            <span className="nav-icon-wrap">
+              <Icon name={item.icon} size={20} />
+              {item.badge != null && item.badge > 0 && (
+                <span className="nav-badge">{item.badge > 9 ? '9+' : item.badge}</span>
+              )}
+            </span>
+            <span className="nav-label">{item.label}</span>
+          </button>
+        )
+      })}
     </nav>
   )
 }
