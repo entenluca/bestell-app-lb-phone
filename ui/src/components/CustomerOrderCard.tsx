@@ -30,7 +30,7 @@ export function CustomerOrderCard({ order, paymentMethods }: Props) {
         </span>
       </div>
 
-      <OrderStatusTracker status={order.status} />
+      <OrderStatusTracker status={order.status} cancelReason={order.cancelReason} />
 
       <div className="customer-order-items">
         {order.items.map((item) => (

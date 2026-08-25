@@ -67,6 +67,7 @@ export interface Order {
   deliveryFee: number
   total: number
   updatedAt?: string
+  cancelReason?: string
 }
 
 export interface DashboardStats {

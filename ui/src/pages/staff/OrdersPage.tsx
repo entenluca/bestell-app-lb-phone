@@ -9,6 +9,7 @@ interface Props {
   orders: Order[]
   paymentMethods: PaymentMethod[]
   onStatusChange: (orderId: string, status: OrderStatus) => void
+  onCancel: (orderId: string, reason: string) => void
   onMarkDelivery: (orderId: string) => void
 }
 
@@ -26,6 +27,7 @@ export function OrdersPage({
   orders,
   paymentMethods,
   onStatusChange,
+  onCancel,
   onMarkDelivery,
 }: Props) {
   const [filter, setFilter] = useState('active')
@@ -75,6 +77,7 @@ export function OrdersPage({
               order={order}
               paymentMethods={paymentMethods}
               onStatusChange={onStatusChange}
+              onCancel={onCancel}
               onMarkDelivery={onMarkDelivery}
             />
           ))

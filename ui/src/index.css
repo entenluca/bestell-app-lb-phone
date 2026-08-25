@@ -152,6 +152,21 @@ img {
   padding: 8px 12px;
 }
 
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 700;
+}
+
+.btn-icon {
+  padding: 8px;
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .btn-sm {
   padding: 8px 14px;
   font-size: 13px;
@@ -1182,12 +1197,6 @@ img {
   color: var(--text);
 }
 
-.status-tracker-cancelled {
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-}
-
 .status-tracker-badge {
   display: inline-flex;
   align-items: center;
@@ -1269,6 +1278,86 @@ img {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   margin-bottom: 10px;
+}
+
+.order-cancel-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.modal {
+  width: 100%;
+  max-width: 360px;
+  padding: 18px;
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+.status-tracker-cancelled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+}
+
+.status-cancel-reason {
+  width: 100%;
+  margin: 0;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--text-secondary);
 }
 
 .order-meta {

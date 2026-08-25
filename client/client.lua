@@ -89,6 +89,11 @@ RegisterNUICallback("updateStatus", function(data, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("cancelOrder", function(data, cb)
+    TriggerServerEvent("alpp-food:cancelOrder", data.orderId, data.reason)
+    cb("ok")
+end)
+
 RegisterNUICallback("markForDelivery", function(data, cb)
     TriggerServerEvent("alpp-food:markForDelivery", data.orderId)
     cb("ok")

@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import type { Order, OrderStatus, PaymentMethod } from '../types'
 import { STATUS_COLORS, STATUS_LABELS, STATUS_FLOW } from '../types'
 import { fetchNui, formatPrice, formatTime, getPaymentLabel } from '../utils/nui'
+import { CancelOrderModal } from './CancelOrderModal'
 import { Icon } from './Icon'
 
 interface Props {
   order: Order
   paymentMethods: PaymentMethod[]
   onStatusChange?: (orderId: string, status: OrderStatus) => void
+  onCancel?: (orderId: string, reason: string) => void
   onMarkDelivery?: (orderId: string) => void
   onMarkDelivered?: (orderId: string) => void
   compact?: boolean
@@ -17,11 +20,13 @@ export function OrderCard({
   order,
   paymentMethods,
   onStatusChange,
+  onCancel,
   onMarkDelivery,
   onMarkDelivered,
   compact = false,
   showDeliveryActions = false,
 }: Props) {
+  const [showCancelModal, setShowCancelModal] = useState(false)
   const statusColor = STATUS_COLORS[order.status]
   const currentIdx = STATUS_FLOW.indexOf(order.status)
   const nextStatus = currentIdx >= 0 && currentIdx < STATUS_FLOW.length - 1
@@ -82,6 +87,13 @@ export function OrderCard({
           </div>
         )}
 
+        {order.status === 'storniert' && order.cancelReason && (
+          <div className="order-cancel-reason">
+            <Icon name="close" size={14} />
+            <span>Stornierungsgrund: {order.cancelReason}</span>
+          </div>
+        )}
+
         <div className="order-meta">
           <span>{getPaymentLabel(order.paymentMethod, paymentMethods)}</span>
           <strong>{formatPrice(order.total)}</strong>
@@ -121,26 +133,39 @@ export function OrderCard({
                 <Icon name="next" size={14} />
                 {STATUS_LABELS[nextStatus]}
               </button>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                onClick={() => onStatusChange(order.id, 'storniert')}
-              >
-                Stornieren
-              </button>
+              {onCancel && (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setShowCancelModal(true)}
+                >
+                  Stornieren
+                </button>
+              )}
             </div>
           )}
 
-          {onStatusChange && !nextStatus && (
+          {onCancel && !nextStatus && (
             <button
               type="button"
               className="btn btn-ghost btn-sm"
-              onClick={() => onStatusChange(order.id, 'storniert')}
+              onClick={() => setShowCancelModal(true)}
             >
               Stornieren
             </button>
           )}
         </div>
+      )}
+
+      {showCancelModal && onCancel && (
+        <CancelOrderModal
+          orderId={order.id}
+          onClose={() => setShowCancelModal(false)}
+          onConfirm={(reason) => {
+            onCancel(order.id, reason)
+            setShowCancelModal(false)
+          }}
+        />
       )}
 
       {showDeliveryActions && isDelivery && order.status === 'bereit' && onMarkDelivered && (

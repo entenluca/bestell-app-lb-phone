@@ -5,6 +5,7 @@ import { Icon } from './Icon'
 
 interface Props {
   status: OrderStatus
+  cancelReason?: string
 }
 
 const STEP_ICONS: Record<OrderStatus, string> = {
@@ -16,7 +17,7 @@ const STEP_ICONS: Record<OrderStatus, string> = {
   storniert: 'close',
 }
 
-export function OrderStatusTracker({ status }: Props) {
+export function OrderStatusTracker({ status, cancelReason }: Props) {
   if (status === 'storniert') {
     return (
       <div className="status-tracker status-tracker-cancelled">
@@ -24,6 +25,9 @@ export function OrderStatusTracker({ status }: Props) {
           <Icon name="close" size={14} />
           Storniert
         </span>
+        {cancelReason && (
+          <p className="status-cancel-reason">Grund: {cancelReason}</p>
+        )}
       </div>
     )
   }

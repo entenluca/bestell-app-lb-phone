@@ -208,6 +208,22 @@ export default function App() {
     fetchNui('updateStatus', { orderId, status })
   }, [])
 
+  const handleCancelOrder = useCallback((orderId: string, reason: string) => {
+    if (isBrowser) {
+      setOrders((prev) => {
+        const updated = prev.map((o) =>
+          o.id === orderId
+            ? { ...o, status: 'storniert' as const, cancelReason: reason, updatedAt: new Date().toISOString() }
+            : o
+        )
+        setStats(computeStats(updated))
+        return updated
+      })
+      return
+    }
+    fetchNui('cancelOrder', { orderId, reason })
+  }, [])
+
   const handleMarkDelivery = useCallback((orderId: string) => {
     if (isBrowser) {
       setOrders((prev) => {
@@ -411,6 +427,7 @@ export default function App() {
                 orders={orders}
                 paymentMethods={initData.paymentMethods}
                 onStatusChange={handleStatusChange}
+                onCancel={handleCancelOrder}
                 onMarkDelivery={handleMarkDelivery}
               />
             )}

@@ -238,6 +238,8 @@ RegisterNetEvent("alpp-food:updateStatus", function(orderId, newStatus)
     local src = source
     if not isStaff(src) then return end
 
+    if newStatus == "storniert" then return end
+
     local order = findOrder(orderId)
     if not order then return end
 
@@ -253,6 +255,32 @@ RegisterNetEvent("alpp-food:updateStatus", function(orderId, newStatus)
     broadcastOrders()
 
     notifyOrderOwner(order, "Bestellstatus aktualisiert", "Deine Bestellung " .. order.id .. " ist jetzt: " .. (statusLabels[newStatus] or newStatus))
+end)
+
+RegisterNetEvent("alpp-food:cancelOrder", function(orderId, reason)
+    local src = source
+    if not isStaff(src) then return end
+
+    if type(reason) ~= "string" then return end
+
+    reason = reason:gsub("^%s+", ""):gsub("%s+$", "")
+    if #reason < 3 or #reason > 200 then return end
+
+    local order = findOrder(orderId)
+    if not order then return end
+    if order.status == "storniert" or order.status == "ausgeliefert" then return end
+
+    order.status = "storniert"
+    order.cancelReason = reason
+    order.updatedAt = os.date("%Y-%m-%dT%H:%M:%S")
+    saveOrders()
+    broadcastOrders()
+
+    notifyOrderOwner(
+        order,
+        "Bestellung storniert",
+        "Deine Bestellung " .. order.id .. " wurde storniert. Grund: " .. reason
+    )
 end)
 
 RegisterNetEvent("alpp-food:markForDelivery", function(orderId)
