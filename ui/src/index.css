@@ -94,10 +94,11 @@ img {
 
 .app-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(88px + var(--safe-bottom));
+  padding-bottom: 20px;
   scroll-behavior: smooth;
 }
 
@@ -254,14 +255,11 @@ img {
 
 .bottom-nav {
   display: flex;
+  flex-shrink: 0;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
   padding: 10px 10px calc(10px + var(--safe-bottom));
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   z-index: 20;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.06);
 }
@@ -445,7 +443,7 @@ img {
 /* Home */
 .home-page {
   min-height: 100%;
-  padding-bottom: 88px;
+  padding-bottom: 20px;
 }
 
 .hero {
@@ -975,7 +973,7 @@ img {
 }
 
 .my-orders-list {
-  padding: 0 16px 20px;
+  padding: 0 16px 24px;
 }
 
 .my-orders-section h2 {
@@ -1303,7 +1301,7 @@ img {
 }
 
 .orders-list {
-  padding: 4px 16px 16px;
+  padding: 4px 16px 24px;
 }
 
 .delivery-stats {
