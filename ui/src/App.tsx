@@ -259,6 +259,9 @@ export default function App() {
     [myOrders]
   )
 
+  const showCustomerNav = mode === 'customer' && (customerView === 'home' || customerView === 'orders')
+  const hasBottomNav = showCustomerNav || mode === 'staff'
+
   if (!initData) {
     return (
       <div className="app">
@@ -276,9 +279,6 @@ export default function App() {
       </div>
     )
   }
-
-  const showCustomerNav = mode === 'customer' && (customerView === 'home' || customerView === 'orders')
-  const hasBottomNav = showCustomerNav || mode === 'staff'
 
   return (
     <div className="app">
