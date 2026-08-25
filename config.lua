@@ -5,6 +5,7 @@ Config.DefaultApp = true
 Config.Name = "Alpp Food"
 Config.Description = "Essen bestellen & ausliefern"
 Config.Developer = "Alpp Restaurant"
+Config.AppIcon = "ui/dist/icon.png"
 
 -- Restaurant
 Config.RestaurantName = "Alpp Kitchen"

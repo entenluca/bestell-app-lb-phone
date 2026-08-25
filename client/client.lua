@@ -1,8 +1,9 @@
 local identifier = Config.Identifier
 local resourceName = GetCurrentResourceName()
 
-local function getAppIconUrl()
-    return "https://cfx-nui-" .. resourceName .. "/ui/dist/icon.png"
+local function getAppIconUrl(format)
+    format = format or "png"
+    return "https://cfx-nui-" .. resourceName .. "/" .. (Config.AppIcon:gsub("%.png$", "." .. format))
 end
 
 while GetResourceState("lb-phone") ~= "started" do
@@ -19,6 +20,8 @@ end
 local function addApp()
     local uiPath = "ui/dist/index.html"
 
+    local iconUrl = getAppIconUrl("png")
+
     local added, errorMessage = exports["lb-phone"]:AddCustomApp({
         identifier = identifier,
         name = Config.Name,
@@ -27,7 +30,8 @@ local function addApp()
         defaultApp = Config.DefaultApp,
         size = 245760,
         ui = resourceName .. "/" .. uiPath,
-        icon = getAppIconUrl(),
+        icon = iconUrl,
+        images = { iconUrl },
         fixBlur = true,
     })
 
@@ -166,7 +170,8 @@ RegisterNetEvent("alpp-food:orderStatusNotification", function(data)
         app = identifier,
         title = data.title or "Bestellstatus",
         content = data.content or "",
-        avatar = getAppIconUrl(),
+        avatar = getAppIconUrl("png"),
+        thumbnail = getAppIconUrl("png"),
     })
 end)
 
@@ -186,7 +191,8 @@ RegisterNetEvent("alpp-food:orderResult", function(result)
             app = identifier,
             title = "Bestellung aufgegeben",
             content = "Deine Bestellung " .. result.orderId .. " wurde empfangen.",
-            avatar = getAppIconUrl(),
+            avatar = getAppIconUrl("png"),
+            thumbnail = getAppIconUrl("png"),
         })
     end
 end)
