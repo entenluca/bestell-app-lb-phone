@@ -84,6 +84,8 @@ export interface InitData {
   categories: Category[]
   paymentMethods: PaymentMethod[]
   isStaff: boolean
+  phoneSafeTop?: string
+  phoneSafeSide?: string
 }
 
 export type CustomerView = 'home' | 'cart' | 'checkout' | 'confirmation'

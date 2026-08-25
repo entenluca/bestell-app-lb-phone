@@ -19,7 +19,12 @@
   --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
   --radius: 16px;
   --radius-sm: 10px;
+  /* LB Phone: Statusleiste + Dynamic Island (iPhone 15 Pro Max) */
+  --phone-safe-top: 0px;
+  --phone-safe-side: 0px;
+  --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --app-top: calc(var(--phone-safe-top) + var(--safe-top));
 }
 
 [data-theme='dark'] {
@@ -38,6 +43,10 @@ html, body, #root {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+}
+
+body {
+  visibility: hidden;
 }
 
 /* LB Phone lädt die App in einem schmalen iframe – kein Desktop-Layout */
@@ -73,6 +82,7 @@ img {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  padding-top: var(--app-top);
 }
 
 .app-content {
@@ -212,7 +222,9 @@ img {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 12px 16px;
+  padding-left: calc(16px + var(--phone-safe-side));
+  padding-right: calc(16px + var(--phone-safe-side));
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -342,19 +354,21 @@ img {
 /* Home */
 .home-page { min-height: 100%; padding-bottom: 80px; }
 .hero {
-  display: flex; align-items: center; gap: 12px;
-  padding: 20px 16px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  padding-left: calc(16px + var(--phone-safe-side));
+  padding-right: calc(12px + var(--phone-safe-side));
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
 }
-.hero-logo { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); }
+.hero-logo { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; }
 .hero-text { flex: 1; min-width: 0; }
-.hero-text h1 { font-size: 20px; font-weight: 800; }
-.hero-text p { font-size: 12px; opacity: 0.85; }
-.hero-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.hero-btn { display: inline-flex; align-items: center; gap: 6px; }
+.hero-text h1 { font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-text p { font-size: 11px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.hero-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 10px !important; }
 .hero-actions .btn-secondary { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); color: white; }
-.cart-btn { position: relative; min-width: 44px; }
+.cart-btn { position: relative; min-width: 40px; }
 .cart-count { font-weight: 800; }
 .delivery-info {
   display: flex; justify-content: space-around; gap: 8px;

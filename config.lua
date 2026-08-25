@@ -13,6 +13,11 @@ Config.Logo = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=20
 Config.DeliveryFee = 4.50
 Config.MinOrder = 0
 
+-- Safe Area für LB Phone (Dynamic Island / Statusleiste)
+-- iPhone 15 Pro Max: ca. 3.75rem, bei Bedarf anpassen
+Config.PhoneSafeTop = "3.75rem"
+Config.PhoneSafeSide = "0.5rem"
+
 -- Mitarbeiter: Job-Namen die Zugriff auf den Mitarbeiterbereich haben
 -- Leer lassen = jeder Spieler kann Mitarbeiterbereich nutzen (zum Testen)
 Config.StaffJobs = {

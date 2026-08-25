@@ -49,20 +49,41 @@ export function onNuiEvent<T>(action: string, handler: (data: T) => void) {
   return () => window.removeEventListener('message', listener)
 }
 
+export function applyPhoneSafeArea(top = '3.75rem', side = '0.5rem') {
+  const root = document.documentElement
+  root.style.setProperty('--phone-safe-top', top)
+  root.style.setProperty('--phone-safe-side', side)
+}
+
+export function showApp() {
+  document.body.style.visibility = 'visible'
+}
+
 export function waitForPhoneReady(): Promise<void> {
-  if (isEnvBrowser) return Promise.resolve()
-  if ((window as any).components) return Promise.resolve()
+  if (isEnvBrowser) {
+    showApp()
+    return Promise.resolve()
+  }
+
+  const done = () => showApp()
+
+  if ((window as any).components) {
+    done()
+    return Promise.resolve()
+  }
 
   return new Promise((resolve) => {
     const onMessage = (event: MessageEvent) => {
       if (event.data === 'componentsLoaded') {
         window.removeEventListener('message', onMessage)
+        done()
         resolve()
       }
     }
     window.addEventListener('message', onMessage)
     setTimeout(() => {
       window.removeEventListener('message', onMessage)
+      done()
       resolve()
     }, 2000)
   })

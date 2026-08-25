@@ -11,7 +11,7 @@ import type {
   StaffView,
 } from './types'
 import { mockInitData, mockOrders } from './data/mock'
-import { fetchNui, onNuiEvent, waitForPhoneReady } from './utils/nui'
+import { fetchNui, onNuiEvent, waitForPhoneReady, applyPhoneSafeArea } from './utils/nui'
 import { BottomNav } from './components/BottomNav'
 import { HomePage } from './pages/HomePage'
 import { CartPage } from './pages/CartPage'
@@ -71,6 +71,7 @@ export default function App() {
       await waitForPhoneReady()
       const data = await fetchNui<InitData>('getInitData')
       if (!cancelled && data?.menu?.length) {
+        applyPhoneSafeArea(data.phoneSafeTop ?? '3.75rem', data.phoneSafeSide ?? '0.5rem')
         setInitData(data)
       } else if (!cancelled) {
         setLoadError(true)

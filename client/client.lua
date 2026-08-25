@@ -54,6 +54,8 @@ RegisterNUICallback("getInitData", function(_, cb)
         categories = Config.Categories,
         paymentMethods = Config.PaymentMethods,
         isStaff = false,
+        phoneSafeTop = Config.PhoneSafeTop,
+        phoneSafeSide = Config.PhoneSafeSide,
     })
 
     TriggerServerEvent("alpp-food:requestStaffStatus")

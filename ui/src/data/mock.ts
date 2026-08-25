@@ -88,6 +88,8 @@ export const mockInitData: InitData = {
     { id: 'phone', label: 'Über Handy bezahlt' },
   ] as PaymentMethod[],
   isStaff: true,
+  phoneSafeTop: '3.75rem',
+  phoneSafeSide: '0.5rem',
 }
 
 export const mockOrders: Order[] = [
