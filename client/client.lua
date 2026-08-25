@@ -65,6 +65,11 @@ RegisterNUICallback("getInitData", function(_, cb)
     TriggerServerEvent("alpp-food:requestStaffStatus")
 end)
 
+RegisterNUICallback("getMyOrders", function(_, cb)
+    TriggerServerEvent("alpp-food:getMyOrders")
+    cb("ok")
+end)
+
 RegisterNUICallback("getOrders", function(_, cb)
     TriggerServerEvent("alpp-food:getOrders")
     cb("ok")
@@ -148,6 +153,21 @@ end)
 -- Server Events
 RegisterNetEvent("alpp-food:staffStatus", function(isStaff)
     sendAppMessage("staffStatus", { isStaff = isStaff })
+end)
+
+RegisterNetEvent("alpp-food:myOrdersData", function(myOrders)
+    sendAppMessage("myOrdersData", myOrders)
+end)
+
+RegisterNetEvent("alpp-food:orderStatusNotification", function(data)
+    if not data then return end
+
+    exports["lb-phone"]:SendNotification({
+        app = identifier,
+        title = data.title or "Bestellstatus",
+        content = data.content or "",
+        avatar = getAppIconUrl(),
+    })
 end)
 
 RegisterNetEvent("alpp-food:ordersData", function(data)

@@ -17,6 +17,7 @@ import { HomePage } from './pages/HomePage'
 import { CartPage } from './pages/CartPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { ConfirmationPage } from './pages/ConfirmationPage'
+import { MyOrdersPage } from './pages/MyOrdersPage'
 import { DashboardPage } from './pages/staff/DashboardPage'
 import { OrdersPage } from './pages/staff/OrdersPage'
 import { DeliveriesPage } from './pages/staff/DeliveriesPage'
@@ -53,6 +54,9 @@ function computeStats(orders: Order[]): DashboardStats {
 export default function App() {
   const [initData, setInitData] = useState<InitData | null>(isBrowser ? mockInitData : null)
   const [orders, setOrders] = useState<Order[]>(isBrowser ? mockOrders : [])
+  const [myOrders, setMyOrders] = useState<Order[]>([])
+  const [myOrderIds, setMyOrderIds] = useState<Set<string>>(new Set())
+  const [myOrdersLoading, setMyOrdersLoading] = useState(false)
   const [stats, setStats] = useState<DashboardStats>(computeStats(isBrowser ? mockOrders : []))
   const [mode, setMode] = useState<AppMode>('customer')
   const [customerView, setCustomerView] = useState<CustomerView>('home')
@@ -82,6 +86,10 @@ export default function App() {
 
     onNuiEvent<{ isStaff: boolean }>('staffStatus', (data) => {
       setInitData((prev) => (prev ? { ...prev, isStaff: data.isStaff } : prev))
+    })
+    onNuiEvent<Order[]>('myOrdersData', (data) => {
+      setMyOrders(data)
+      setMyOrdersLoading(false)
     })
     onNuiEvent<{ orders: Order[]; stats: DashboardStats }>('ordersData', (data) => {
       setOrders(data.orders)
@@ -165,6 +173,8 @@ export default function App() {
             setStats(computeStats(updated))
             return updated
           })
+          setMyOrders((prev) => [newOrder, ...prev])
+          setMyOrderIds((prev) => new Set([...prev, newOrder.id]))
           setCart([])
           setConfirmedOrder({ id: newOrder.id, total: newOrder.total })
           setCustomerView('confirmation')
@@ -220,6 +230,22 @@ export default function App() {
     fetchNui('markDelivered', { orderId })
   }, [])
 
+  const refreshMyOrders = useCallback(() => {
+    if (isBrowser) return
+    setMyOrdersLoading(true)
+    fetchNui('getMyOrders')
+  }, [])
+
+  useEffect(() => {
+    if (!initData || isBrowser) return
+    refreshMyOrders()
+  }, [initData, refreshMyOrders])
+
+  useEffect(() => {
+    if (!isBrowser || myOrderIds.size === 0) return
+    setMyOrders(orders.filter((order) => myOrderIds.has(order.id)))
+  }, [orders, isBrowser, myOrderIds])
+
   const refreshOrders = useCallback(() => {
     if (!isBrowser) fetchNui('getOrders')
   }, [])
@@ -246,11 +272,17 @@ export default function App() {
     )
   }
 
-  const customerNav = customerView === 'home' && cartCount > 0
+  const activeMyOrdersCount = useMemo(
+    () => myOrders.filter((o) => o.status !== 'ausgeliefert' && o.status !== 'storniert').length,
+    [myOrders]
+  )
+
+  const showCustomerNav = mode === 'customer' && (customerView === 'home' || customerView === 'orders')
+  const hasBottomNav = showCustomerNav || mode === 'staff'
 
   return (
     <div className="app">
-      <div className={`app-content ${mode === 'staff' || customerView !== 'home' ? 'no-nav' : ''}`}>
+      <div className={`app-content ${hasBottomNav ? '' : 'no-nav'}`}>
         {mode === 'customer' ? (
           <>
             {customerView === 'home' && (
@@ -259,8 +291,10 @@ export default function App() {
                 menu={initData.menu}
                 categories={initData.categories}
                 cartCount={cartCount}
+                activeOrdersCount={activeMyOrdersCount}
                 onAddToCart={addToCart}
                 onOpenCart={() => setCustomerView('cart')}
+                onOpenOrders={() => setCustomerView('orders')}
                 onSwitchStaff={() => setMode('staff')}
                 isStaff={initData.isStaff}
               />
@@ -293,6 +327,19 @@ export default function App() {
                   setConfirmedOrder(null)
                   setCustomerView('home')
                 }}
+                onTrackOrder={() => {
+                  setConfirmedOrder(null)
+                  setCustomerView('orders')
+                  refreshMyOrders()
+                }}
+              />
+            )}
+            {customerView === 'orders' && (
+              <MyOrdersPage
+                orders={myOrders}
+                paymentMethods={initData.paymentMethods}
+                onBack={() => setCustomerView('home')}
+                loading={myOrdersLoading}
               />
             )}
           </>
@@ -324,6 +371,22 @@ export default function App() {
         )}
       </div>
 
+      {showCustomerNav && (
+        <BottomNav
+          active={customerView === 'orders' ? 'orders' : 'home'}
+          onChange={(id) => setCustomerView(id as CustomerView)}
+          items={[
+            { id: 'home', label: 'Speisekarte', icon: 'utensils' },
+            {
+              id: 'orders',
+              label: 'Bestellungen',
+              icon: 'orders',
+              badge: activeMyOrdersCount,
+            },
+          ]}
+        />
+      )}
+
       {mode === 'staff' && (
         <BottomNav
           active={staffView}
@@ -346,9 +409,6 @@ export default function App() {
         />
       )}
 
-      {mode === 'customer' && customerView === 'home' && !customerNav && (
-        <div style={{ height: 0 }} />
-      )}
     </div>
   )
 }

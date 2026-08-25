@@ -962,6 +962,135 @@ img {
   margin-bottom: 24px;
 }
 
+.confirmation-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* My Orders */
+.my-orders-page {
+  min-height: 100%;
+}
+
+.my-orders-list {
+  padding: 0 16px 20px;
+}
+
+.my-orders-section h2 {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin: 8px 0 12px;
+}
+
+.customer-order-card {
+  margin-bottom: 14px;
+}
+
+.customer-order-active {
+  border-color: rgba(255, 107, 53, 0.25);
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.08);
+}
+
+.customer-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 16px 0;
+}
+
+.customer-order-items {
+  padding: 12px 16px 0;
+}
+
+.customer-order-footer {
+  padding: 12px 16px 16px;
+}
+
+.status-tracker {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 16px 12px 8px;
+  padding: 12px 8px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.status-tracker-cancelled {
+  justify-content: center;
+  padding: 10px;
+}
+
+.status-tracker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 52px;
+}
+
+.status-step-marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.status-step.done .status-step-marker,
+.status-step.active .status-step-marker {
+  background: var(--surface);
+}
+
+.status-step-label {
+  margin-top: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.status-step.active .status-step-label,
+.status-step.done .status-step-label {
+  color: var(--text);
+}
+
+.status-step-line {
+  position: absolute;
+  top: 15px;
+  left: calc(50% + 15px);
+  width: calc(100% - 30px);
+  height: 2px;
+  background: var(--border-strong);
+  z-index: 0;
+}
+
+.status-step-line.done {
+  background: var(--primary);
+}
+
 /* Orders */
 .order-card {
   margin-bottom: 14px;

@@ -9,8 +9,10 @@ interface Props {
   menu: MenuItem[]
   categories: Category[]
   cartCount: number
+  activeOrdersCount: number
   onAddToCart: (item: MenuItem) => void
   onOpenCart: () => void
+  onOpenOrders: () => void
   onSwitchStaff: () => void
   isStaff: boolean
 }
@@ -20,8 +22,10 @@ export function HomePage({
   menu,
   categories,
   cartCount,
+  activeOrdersCount,
   onAddToCart,
   onOpenCart,
+  onOpenOrders,
   onSwitchStaff,
   isStaff,
 }: Props) {
@@ -40,6 +44,12 @@ export function HomePage({
           <p>{restaurant.tagline}</p>
         </div>
         <div className="hero-actions">
+          {activeOrdersCount > 0 && (
+            <button className="btn btn-secondary btn-sm hero-btn" onClick={onOpenOrders}>
+              <Icon name="orders" size={16} />
+              {activeOrdersCount}
+            </button>
+          )}
           {isStaff && (
             <button className="btn btn-secondary btn-sm hero-btn" onClick={onSwitchStaff}>
               <Icon name="dashboard" size={16} />

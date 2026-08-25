@@ -3,6 +3,15 @@ local ordersFile = "orders.json"
 local orders = {}
 local orderCounter = 1000
 
+local statusLabels = {
+    neu = "Neu",
+    in_bearbeitung = "In Bearbeitung",
+    bereit = "Bereit zur Lieferung",
+    unterwegs = "Unterwegs",
+    ausgeliefert = "Ausgeliefert",
+    storniert = "Storniert",
+}
+
 local function loadOrders()
     local raw = LoadResourceFile(resourceName, ordersFile)
     if raw and raw ~= "" then
@@ -66,6 +75,35 @@ local function findOrder(orderId)
     return nil, nil
 end
 
+local function getOrdersForPlayer(source)
+    local playerOrders = {}
+
+    for _, order in ipairs(orders) do
+        if order.playerSource == source then
+            table.insert(playerOrders, order)
+        end
+    end
+
+    return playerOrders
+end
+
+local function sendMyOrders(source)
+    TriggerClientEvent("alpp-food:myOrdersData", source, getOrdersForPlayer(source))
+end
+
+local function notifyOrderOwner(order, title, content)
+    if not order or not order.playerSource then return end
+
+    sendMyOrders(order.playerSource)
+
+    TriggerClientEvent("alpp-food:orderStatusNotification", order.playerSource, {
+        orderId = order.id,
+        status = order.status,
+        title = title,
+        content = content,
+    })
+end
+
 local function getDashboardStats()
     local stats = {
         neu = 0,
@@ -119,6 +157,10 @@ RegisterNetEvent("alpp-food:getOrders", function()
         orders = orders,
         stats = getDashboardStats(),
     })
+end)
+
+RegisterNetEvent("alpp-food:getMyOrders", function()
+    sendMyOrders(source)
 end)
 
 RegisterNetEvent("alpp-food:createOrder", function(orderData)
@@ -183,6 +225,8 @@ RegisterNetEvent("alpp-food:createOrder", function(orderData)
         orderId = order.id,
         total = total,
     })
+
+    sendMyOrders(src)
 end)
 
 RegisterNetEvent("alpp-food:updateStatus", function(orderId, newStatus)
@@ -202,6 +246,8 @@ RegisterNetEvent("alpp-food:updateStatus", function(orderId, newStatus)
     order.updatedAt = os.date("%Y-%m-%dT%H:%M:%S")
     saveOrders()
     broadcastOrders()
+
+    notifyOrderOwner(order, "Bestellstatus aktualisiert", "Deine Bestellung " .. order.id .. " ist jetzt: " .. (statusLabels[newStatus] or newStatus))
 end)
 
 RegisterNetEvent("alpp-food:markForDelivery", function(orderId)
@@ -215,6 +261,8 @@ RegisterNetEvent("alpp-food:markForDelivery", function(orderId)
     order.updatedAt = os.date("%Y-%m-%dT%H:%M:%S")
     saveOrders()
     broadcastOrders()
+
+    notifyOrderOwner(order, "Bestellung unterwegs", "Deine Bestellung " .. order.id .. " ist auf dem Weg zu dir.")
 end)
 
 RegisterNetEvent("alpp-food:markDelivered", function(orderId)
@@ -228,6 +276,8 @@ RegisterNetEvent("alpp-food:markDelivered", function(orderId)
     order.updatedAt = os.date("%Y-%m-%dT%H:%M:%S")
     saveOrders()
     broadcastOrders()
+
+    notifyOrderOwner(order, "Bestellung geliefert", "Deine Bestellung " .. order.id .. " wurde ausgeliefert. Guten Appetit!")
 end)
 
 -- Beispiel-Bestellungen beim ersten Start

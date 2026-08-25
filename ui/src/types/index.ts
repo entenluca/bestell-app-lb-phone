@@ -88,7 +88,7 @@ export interface InitData {
   phoneSafeSide?: string
 }
 
-export type CustomerView = 'home' | 'cart' | 'checkout' | 'confirmation'
+export type CustomerView = 'home' | 'cart' | 'checkout' | 'confirmation' | 'orders'
 export type StaffView = 'dashboard' | 'orders' | 'deliveries'
 export type AppMode = 'customer' | 'staff'
 
@@ -117,3 +117,12 @@ export const STATUS_FLOW: OrderStatus[] = [
   'unterwegs',
   'ausgeliefert',
 ]
+
+export const CUSTOMER_STATUS_LABELS: Record<OrderStatus, string> = {
+  neu: 'Eingegangen',
+  in_bearbeitung: 'Zubereitung',
+  bereit: 'Fertig',
+  unterwegs: 'Unterwegs',
+  ausgeliefert: 'Geliefert',
+  storniert: 'Storniert',
+}

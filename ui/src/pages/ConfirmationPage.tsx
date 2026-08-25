@@ -5,9 +5,10 @@ interface Props {
   orderId: string
   total: number
   onBackHome: () => void
+  onTrackOrder: () => void
 }
 
-export function ConfirmationPage({ orderId, total, onBackHome }: Props) {
+export function ConfirmationPage({ orderId, total, onBackHome, onTrackOrder }: Props) {
   return (
     <div className="confirmation-page fade-in">
       <div className="confirmation-content">
@@ -32,9 +33,15 @@ export function ConfirmationPage({ orderId, total, onBackHome }: Props) {
           Dein Essen wird zubereitet und an deinen Standort geliefert (ca. 25–35 Min.).
         </p>
 
-        <button type="button" className="btn btn-primary btn-lg" onClick={onBackHome}>
-          Zurück zur Startseite
-        </button>
+        <div className="confirmation-actions">
+          <button type="button" className="btn btn-primary btn-lg" onClick={onTrackOrder}>
+            <Icon name="orders" size={18} />
+            Status verfolgen
+          </button>
+          <button type="button" className="btn btn-secondary btn-lg" onClick={onBackHome}>
+            Zurück zur Startseite
+          </button>
+        </div>
       </div>
     </div>
   )
