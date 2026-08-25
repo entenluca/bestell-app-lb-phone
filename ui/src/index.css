@@ -345,6 +345,50 @@ img {
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
+.form-group.has-error input,
+.form-group.has-error textarea,
+.form-group.has-error select,
+.checkout-section.has-error .delivery-map-container {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.form-group.has-error input:focus,
+.form-group.has-error textarea:focus,
+.form-group.has-error select:focus {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  color: #fca5a5;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+[data-theme='light'] .field-error {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.18);
+}
+
+.checkout-section {
+  margin-bottom: 4px;
+}
+
+.checkout-section .field-error {
+  margin: 0 0 12px;
+}
+
 .input-hint {
   display: block;
   margin-top: 6px;

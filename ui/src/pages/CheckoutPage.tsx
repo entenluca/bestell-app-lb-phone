@@ -22,6 +22,34 @@ interface Props {
   loading: boolean
 }
 
+type FieldErrors = {
+  name?: string
+  phone?: string
+  location?: string
+}
+
+function validateCheckout(
+  name: string,
+  phone: string,
+  deliveryLocation: DeliveryLocation | null
+): FieldErrors {
+  const errors: FieldErrors = {}
+
+  if (!name.trim()) {
+    errors.name = 'Bitte gib deinen Namen ein.'
+  }
+
+  if (!phone.trim()) {
+    errors.phone = 'Bitte gib deine Telefonnummer ein.'
+  }
+
+  if (!deliveryLocation) {
+    errors.location = 'Bitte setze deinen Lieferpunkt mit „Meine Position".'
+  }
+
+  return errors
+}
+
 export function CheckoutPage({
   cart,
   restaurant,
@@ -35,6 +63,8 @@ export function CheckoutPage({
   const [note, setNote] = useState('')
   const [payment, setPayment] = useState(paymentMethods[0]?.id ?? 'cash')
   const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation | null>(null)
+  const [errors, setErrors] = useState<FieldErrors>({})
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   useEffect(() => {
     const loadPhone = async () => {
@@ -56,13 +86,26 @@ export function CheckoutPage({
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal + restaurant.deliveryFee
 
+  const clearError = (field: keyof FieldErrors) => {
+    if (!errors[field]) return
+    setErrors((prev) => {
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!deliveryLocation) return
+    setSubmitAttempted(true)
+
+    const nextErrors = validateCheckout(name, phone, deliveryLocation)
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0 || !deliveryLocation) return
 
     onSubmit({
-      customerName: name,
-      phone,
+      customerName: name.trim(),
+      phone: phone.trim(),
       address: deliveryLocation.address,
       coords: { x: deliveryLocation.x, y: deliveryLocation.y, z: deliveryLocation.z },
       note,
@@ -80,13 +123,24 @@ export function CheckoutPage({
     <div className="checkout-page fade-in">
       <PageHeader title="Checkout" onBack={onBack} />
 
-      <form onSubmit={handleSubmit} className="checkout-form">
-        <DeliveryMapPicker
-          location={deliveryLocation}
-          onLocationChange={setDeliveryLocation}
-        />
+      <form onSubmit={handleSubmit} className="checkout-form" noValidate>
+        <div className={submitAttempted && errors.location ? 'checkout-section has-error' : 'checkout-section'}>
+          <DeliveryMapPicker
+            location={deliveryLocation}
+            onLocationChange={(loc) => {
+              setDeliveryLocation(loc)
+              clearError('location')
+            }}
+          />
+          {submitAttempted && errors.location && (
+            <p className="field-error" role="alert">
+              <Icon name="map" size={14} />
+              {errors.location}
+            </p>
+          )}
+        </div>
 
-        <div className="form-group">
+        <div className={`form-group ${errors.name ? 'has-error' : ''}`}>
           <label htmlFor="name">
             <Icon name="orders" size={14} /> Name *
           </label>
@@ -95,12 +149,22 @@ export function CheckoutPage({
             type="text"
             placeholder="Dein Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            onChange={(e) => {
+              setName(e.target.value)
+              clearError('name')
+            }}
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? 'name-error' : undefined}
           />
+          {errors.name && (
+            <p className="field-error" id="name-error" role="alert">
+              <Icon name="bell" size={14} />
+              {errors.name}
+            </p>
+          )}
         </div>
 
-        <div className="form-group">
+        <div className={`form-group ${errors.phone ? 'has-error' : ''}`}>
           <label htmlFor="phone">
             <Icon name="phone" size={14} /> Telefonnummer *
           </label>
@@ -109,12 +173,21 @@ export function CheckoutPage({
             type="tel"
             placeholder="555-0123"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
+            onChange={(e) => {
+              setPhone(e.target.value)
+              clearError('phone')
+            }}
+            aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? 'phone-error' : undefined}
           />
-          {phone && (
+          {errors.phone ? (
+            <p className="field-error" id="phone-error" role="alert">
+              <Icon name="phone" size={14} />
+              {errors.phone}
+            </p>
+          ) : phone ? (
             <span className="input-hint">Aus deinem Handy übernommen</span>
-          )}
+          ) : null}
         </div>
 
         <div className="form-group">
@@ -160,7 +233,7 @@ export function CheckoutPage({
         <button
           type="submit"
           className="btn btn-primary btn-lg"
-          disabled={loading || !deliveryLocation}
+          disabled={loading}
         >
           {loading ? 'Wird gesendet...' : 'Bestellung abschicken'}
         </button>
