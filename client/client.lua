@@ -86,6 +86,19 @@ RegisterNUICallback("markDelivered", function(data, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("getPlayerPhone", function(_, cb)
+    local phone = ""
+
+    if GetResourceState("lb-phone") == "started" then
+        local number = exports["lb-phone"]:GetEquippedPhoneNumber()
+        if number then
+            phone = exports["lb-phone"]:FormatNumber(number) or number
+        end
+    end
+
+    cb({ phone = phone })
+end)
+
 RegisterNUICallback("getPlayerLocation", function(_, cb)
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)

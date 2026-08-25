@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { CartItem, DeliveryLocation, PaymentMethod, Restaurant } from '../types'
-import { formatPrice } from '../utils/nui'
+import { fetchNui, formatPrice } from '../utils/nui'
 import { PageHeader } from '../components/PageHeader'
 import { DeliveryMapPicker } from '../components/DeliveryMapPicker'
 import { Icon } from '../components/Icon'
@@ -37,11 +37,20 @@ export function CheckoutPage({
   const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation | null>(null)
 
   useEffect(() => {
-    if (typeof window.getSettings === 'function') {
-      window.getSettings().then((settings) => {
-        if (settings?.name) setName(settings.name)
-      })
+    const loadPhone = async () => {
+      const isBrowser = !(window as any).invokeNative
+      const data = await fetchNui<{ phone?: string }>(
+        'getPlayerPhone',
+        {},
+        isBrowser ? { phone: '555-0123' } : undefined
+      )
+
+      if (data?.phone) {
+        setPhone(data.phone)
+      }
     }
+
+    void loadPhone()
   }, [])
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -103,6 +112,9 @@ export function CheckoutPage({
             onChange={(e) => setPhone(e.target.value)}
             required
           />
+          {phone && (
+            <span className="input-hint">Aus deinem Handy übernommen</span>
+          )}
         </div>
 
         <div className="form-group">

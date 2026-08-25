@@ -339,6 +339,18 @@ img {
   min-height: 80px;
 }
 
+.input-readonly {
+  opacity: 0.85;
+  background: var(--bg);
+}
+
+.input-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
 /* Empty state */
 .empty-state {
   text-align: center;
