@@ -123,3 +123,7 @@ export function getResourceAssetUrl(path: string): string {
 export function sanitizePhoneNumber(value: string): string {
   return value.replace(/\D/g, '')
 }
+
+export function sanitizeName(value: string): string {
+  return value.replace(/[^\p{L}\s-]/gu, '').replace(/\s+/g, ' ')
+}

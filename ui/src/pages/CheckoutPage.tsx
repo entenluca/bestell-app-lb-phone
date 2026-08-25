@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { CartItem, DeliveryLocation, PaymentMethod, Restaurant } from '../types'
-import { fetchNui, formatPrice, sanitizePhoneNumber } from '../utils/nui'
+import { fetchNui, formatPrice, sanitizeName, sanitizePhoneNumber } from '../utils/nui'
 import { PageHeader } from '../components/PageHeader'
 import { DeliveryMapPicker } from '../components/DeliveryMapPicker'
 import { Icon } from '../components/Icon'
@@ -150,7 +150,7 @@ export function CheckoutPage({
             placeholder="Dein Name"
             value={name}
             onChange={(e) => {
-              setName(e.target.value)
+              setName(sanitizeName(e.target.value))
               clearError('name')
             }}
             aria-invalid={!!errors.name}
