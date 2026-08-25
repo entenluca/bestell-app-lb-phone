@@ -113,3 +113,9 @@ export function formatTime(isoString: string): string {
 export function getPaymentLabel(id: string, methods: { id: string; label: string }[]): string {
   return methods.find((m) => m.id === id)?.label ?? id
 }
+
+export function getResourceAssetUrl(path: string): string {
+  const resource = window.resourceName ?? 'bestell-app-lb-phone'
+  const normalized = path.replace(/^\//, '')
+  return `https://cfx-nui-${resource}/${normalized}`
+}

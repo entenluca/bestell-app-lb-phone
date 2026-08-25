@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { DeliveryLocation } from '../types'
-import { fetchNui } from '../utils/nui'
+import { fetchNui, getResourceAssetUrl } from '../utils/nui'
 import { Icon } from './Icon'
 
 type GameMapLocation = {
@@ -14,7 +14,7 @@ type GameMapInstance = {
   ready: Promise<void>
   setPosition(position: { x: number; y: number }, zoomLevel?: number): boolean
   setShowSelf(show: boolean): Promise<void>
-  addLocation(data: { title?: string; coords: { x: number; y: number } }): GameMapLocation | null
+  addLocation(data: { title?: string; image?: string; coords: { x: number; y: number } }): GameMapLocation | null
   removeLocation(location: GameMapLocation | number): boolean
   destroy(): void
 }
@@ -54,6 +54,7 @@ export function DeliveryMapPicker({ location, onLocationChange }: Props) {
     }
     markerRef.current = map.addLocation({
       title: 'Lieferadresse',
+      image: getResourceAssetUrl('ui/dist/marker.svg'),
       coords: { x: loc.x, y: loc.y },
     })
     map.setPosition({ x: loc.x, y: loc.y }, 4)
