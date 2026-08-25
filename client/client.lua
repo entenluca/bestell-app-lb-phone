@@ -41,8 +41,21 @@ end)
 
 -- NUI Callbacks
 RegisterNUICallback("getInitData", function(_, cb)
-    TriggerServerEvent("alpp-food:requestInit")
-    cb("ok")
+    cb({
+        restaurant = {
+            name = Config.RestaurantName,
+            tagline = Config.RestaurantTagline,
+            logo = Config.Logo,
+            deliveryFee = Config.DeliveryFee,
+            minOrder = Config.MinOrder,
+        },
+        menu = Config.Menu,
+        categories = Config.Categories,
+        paymentMethods = Config.PaymentMethods,
+        isStaff = false,
+    })
+
+    TriggerServerEvent("alpp-food:requestStaffStatus")
 end)
 
 RegisterNUICallback("getOrders", function(_, cb)
@@ -71,8 +84,8 @@ RegisterNUICallback("markDelivered", function(data, cb)
 end)
 
 -- Server Events
-RegisterNetEvent("alpp-food:initData", function(data)
-    sendAppMessage("initData", data)
+RegisterNetEvent("alpp-food:staffStatus", function(isStaff)
+    sendAppMessage("staffStatus", { isStaff = isStaff })
 end)
 
 RegisterNetEvent("alpp-food:ordersData", function(data)

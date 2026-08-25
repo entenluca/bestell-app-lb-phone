@@ -1,5 +1,13 @@
 const isEnvBrowser = !(window as any).invokeNative
 
+declare global {
+  interface Window {
+    fetchNui?: <T>(eventName: string, data?: unknown, mockData?: T) => Promise<T>
+    onNuiEvent?: <T>(eventName: string, cb: (data: T) => void) => void
+    resourceName?: string
+  }
+}
+
 export async function fetchNui<T = unknown>(
   eventName: string,
   data?: unknown,
@@ -10,7 +18,11 @@ export async function fetchNui<T = unknown>(
     return {} as T
   }
 
-  const resourceName = (window as any).resourceName ?? 'bestell-app-lb-phone'
+  if (typeof window.fetchNui === 'function') {
+    return window.fetchNui<T>(eventName, data, mockData)
+  }
+
+  const resourceName = window.resourceName ?? 'bestell-app-lb-phone'
 
   const resp = await fetch(`https://${resourceName}/${eventName}`, {
     method: 'POST',
@@ -22,6 +34,11 @@ export async function fetchNui<T = unknown>(
 }
 
 export function onNuiEvent<T>(action: string, handler: (data: T) => void) {
+  if (typeof window.onNuiEvent === 'function') {
+    window.onNuiEvent(action, handler)
+    return () => {}
+  }
+
   const listener = (event: MessageEvent) => {
     const msg = event.data
     if (msg?.action === action) {
@@ -30,6 +47,25 @@ export function onNuiEvent<T>(action: string, handler: (data: T) => void) {
   }
   window.addEventListener('message', listener)
   return () => window.removeEventListener('message', listener)
+}
+
+export function waitForPhoneReady(): Promise<void> {
+  if (isEnvBrowser) return Promise.resolve()
+  if ((window as any).components) return Promise.resolve()
+
+  return new Promise((resolve) => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.data === 'componentsLoaded') {
+        window.removeEventListener('message', onMessage)
+        resolve()
+      }
+    }
+    window.addEventListener('message', onMessage)
+    setTimeout(() => {
+      window.removeEventListener('message', onMessage)
+      resolve()
+    }, 2000)
+  })
 }
 
 export function formatPrice(amount: number): string {

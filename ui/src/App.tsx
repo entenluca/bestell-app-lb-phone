@@ -11,7 +11,7 @@ import type {
   StaffView,
 } from './types'
 import { mockInitData, mockOrders } from './data/mock'
-import { fetchNui, onNuiEvent } from './utils/nui'
+import { fetchNui, onNuiEvent, waitForPhoneReady } from './utils/nui'
 import { BottomNav } from './components/BottomNav'
 import { HomePage } from './pages/HomePage'
 import { CartPage } from './pages/CartPage'
@@ -58,37 +58,52 @@ export default function App() {
   const [staffView, setStaffView] = useState<StaffView>('dashboard')
   const [cart, setCart] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadError, setLoadError] = useState(false)
   const [confirmedOrder, setConfirmedOrder] = useState<{ id: string; total: number } | null>(null)
 
   useEffect(() => {
     if (isBrowser) return
 
-    fetchNui('getInitData')
+    let cancelled = false
 
-    const cleanups = [
-      onNuiEvent<InitData>('initData', (data) => setInitData(data)),
-      onNuiEvent<{ orders: Order[]; stats: DashboardStats }>('ordersData', (data) => {
-        setOrders(data.orders)
-        setStats(data.stats)
-      }),
-      onNuiEvent<Order[]>('ordersUpdated', (data) => {
-        setOrders(data)
-        setStats(computeStats(data))
-      }),
-      onNuiEvent<{ success: boolean; orderId?: string; total?: number; message?: string }>(
-        'orderResult',
-        (result) => {
-          setLoading(false)
-          if (result.success && result.orderId && result.total != null) {
-            setCart([])
-            setConfirmedOrder({ id: result.orderId, total: result.total })
-            setCustomerView('confirmation')
-          }
+    const init = async () => {
+      await waitForPhoneReady()
+      const data = await fetchNui<InitData>('getInitData')
+      if (!cancelled && data?.menu?.length) {
+        setInitData(data)
+      } else if (!cancelled) {
+        setLoadError(true)
+      }
+    }
+
+    init()
+
+    onNuiEvent<{ isStaff: boolean }>('staffStatus', (data) => {
+      setInitData((prev) => (prev ? { ...prev, isStaff: data.isStaff } : prev))
+    })
+    onNuiEvent<{ orders: Order[]; stats: DashboardStats }>('ordersData', (data) => {
+      setOrders(data.orders)
+      setStats(data.stats)
+    })
+    onNuiEvent<Order[]>('ordersUpdated', (data) => {
+      setOrders(data)
+      setStats(computeStats(data))
+    })
+    onNuiEvent<{ success: boolean; orderId?: string; total?: number; message?: string }>(
+      'orderResult',
+      (result) => {
+        setLoading(false)
+        if (result.success && result.orderId && result.total != null) {
+          setCart([])
+          setConfirmedOrder({ id: result.orderId, total: result.total })
+          setCustomerView('confirmation')
         }
-      ),
-    ]
+      }
+    )
 
-    return () => cleanups.forEach((fn) => fn())
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const cartCount = useMemo(
@@ -215,7 +230,12 @@ export default function App() {
       <div className="app">
         <div className="empty-state" style={{ marginTop: '40%' }}>
           <div className="empty-icon pulse">🍽️</div>
-          <h3>Wird geladen...</h3>
+          <h3>{loadError ? 'App konnte nicht geladen werden' : 'Wird geladen...'}</h3>
+          {loadError && (
+            <p style={{ marginTop: 8, fontSize: 13 }}>
+              Bitte Resource neu starten: <code>restart bestell-app-lb-phone</code>
+            </p>
+          )}
         </div>
       </div>
     )

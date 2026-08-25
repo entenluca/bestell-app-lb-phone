@@ -106,21 +106,9 @@ end)
 
 loadOrders()
 
-RegisterNetEvent("alpp-food:requestInit", function()
+RegisterNetEvent("alpp-food:requestStaffStatus", function()
     local src = source
-    TriggerClientEvent("alpp-food:initData", src, {
-        restaurant = {
-            name = Config.RestaurantName,
-            tagline = Config.RestaurantTagline,
-            logo = Config.Logo,
-            deliveryFee = Config.DeliveryFee,
-            minOrder = Config.MinOrder,
-        },
-        menu = Config.Menu,
-        categories = Config.Categories,
-        paymentMethods = Config.PaymentMethods,
-        isStaff = isStaff(src),
-    })
+    TriggerClientEvent("alpp-food:staffStatus", src, isStaff(src))
 end)
 
 RegisterNetEvent("alpp-food:getOrders", function()
