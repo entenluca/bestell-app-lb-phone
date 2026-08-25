@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Icon } from './Icon'
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   onChange: (id: string) => void
 }
 
-export function BottomNav({ items, active, onChange }: Props) {
+export const BottomNav = memo(function BottomNav({ items, active, onChange }: Props) {
   return (
     <nav className="bottom-nav" aria-label="Navigation">
       {items.map((item) => {
@@ -32,4 +33,4 @@ export function BottomNav({ items, active, onChange }: Props) {
       })}
     </nav>
   )
-}
+})

@@ -37,7 +37,7 @@ export function OrderCard({
   }
 
   return (
-    <div className="order-card card fade-in">
+    <div className="order-card card">
       <div className="order-card-header">
         <div className="customer-order-meta">
           <span className="order-id">{order.id}</span>

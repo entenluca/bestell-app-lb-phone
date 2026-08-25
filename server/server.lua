@@ -63,7 +63,12 @@ local function isStaff(source)
 end
 
 local function broadcastOrders()
-    TriggerClientEvent("alpp-food:ordersUpdated", -1, orders)
+    for _, playerId in ipairs(GetPlayers()) do
+        local src = tonumber(playerId)
+        if src and isStaff(src) then
+            TriggerClientEvent("alpp-food:ordersUpdated", src, orders)
+        end
+    end
 end
 
 local function findOrder(orderId)

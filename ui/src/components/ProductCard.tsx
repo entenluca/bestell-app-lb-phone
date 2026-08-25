@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { MenuItem } from '../types'
 import { formatPrice } from '../utils/nui'
 import { Icon } from './Icon'
@@ -7,11 +8,17 @@ interface Props {
   onAdd: (item: MenuItem) => void
 }
 
-export function ProductCard({ item, onAdd }: Props) {
+export const ProductCard = memo(function ProductCard({ item, onAdd }: Props) {
   return (
-    <div className="product-card card fade-in">
+    <div className="product-card card">
       <div className="product-image">
-        <img src={item.image} alt={item.name} loading="lazy" />
+        <img
+          src={item.image}
+          alt={item.name}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+        />
       </div>
       <div className="product-info">
         <h3>{item.name}</h3>
@@ -30,4 +37,4 @@ export function ProductCard({ item, onAdd }: Props) {
       </div>
     </div>
   )
-}
+})

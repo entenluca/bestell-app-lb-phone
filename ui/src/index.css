@@ -56,7 +56,7 @@ html, body, #root {
 
 body {
   visibility: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -99,10 +99,10 @@ img {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 20px;
-  scroll-behavior: smooth;
   overscroll-behavior: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  contain: layout style paint;
 }
 
 .app-content::-webkit-scrollbar {
@@ -125,7 +125,7 @@ img {
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 14px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
   white-space: nowrap;
 }
 
@@ -242,8 +242,7 @@ img {
   padding: 14px 16px;
   padding-left: calc(16px + var(--phone-safe-side));
   padding-right: calc(16px + var(--phone-safe-side));
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
+  background: var(--bg-elevated);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -251,7 +250,7 @@ img {
 }
 
 [data-theme='dark'] .page-header {
-  background: rgba(24, 24, 31, 0.9);
+  background: var(--bg-elevated);
 }
 
 .page-header h1 {
@@ -279,14 +278,13 @@ img {
   flex-shrink: 0;
   gap: 6px;
   padding: 6px 12px calc(8px + var(--safe-bottom));
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(24px);
+  background: var(--bg-elevated);
   border-top: 1px solid var(--border);
   z-index: 20;
 }
 
 [data-theme='dark'] .bottom-nav {
-  background: rgba(10, 10, 14, 0.96);
+  background: var(--bg-elevated);
   border-top-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -637,12 +635,11 @@ img {
   position: sticky;
   top: 0;
   z-index: 8;
-  background: rgba(244, 245, 247, 0.92);
-  backdrop-filter: blur(12px);
+  background: var(--bg);
 }
 
 [data-theme='dark'] .categories-scroll {
-  background: rgba(12, 12, 16, 0.92);
+  background: var(--bg);
 }
 
 .cat-pill {
@@ -658,7 +655,6 @@ img {
   font-weight: 600;
   color: var(--text-secondary);
   box-shadow: var(--shadow);
-  transition: all 0.2s ease;
 }
 
 .cat-pill.active {
@@ -675,18 +671,19 @@ img {
   padding: 4px 16px 20px;
 }
 
+.product-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 280px;
+}
+
 @media (min-width: 360px) {
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.product-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
 .product-card:active {
-  transform: scale(0.98);
+  opacity: 0.92;
 }
 
 .product-image {
@@ -1349,12 +1346,11 @@ img {
   position: sticky;
   top: 0;
   z-index: 8;
-  background: rgba(244, 245, 247, 0.92);
-  backdrop-filter: blur(12px);
+  background: var(--bg);
 }
 
 [data-theme='dark'] .filter-scroll {
-  background: rgba(12, 12, 16, 0.92);
+  background: var(--bg);
 }
 
 .filter-pill {
@@ -1437,7 +1433,13 @@ img {
 }
 
 .fade-in {
-  animation: fadeIn 0.35s ease;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-enter {
+    animation: fadeIn 0.2s ease;
+  }
 }
 
 @keyframes pulse {

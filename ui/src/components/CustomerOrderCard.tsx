@@ -14,7 +14,7 @@ export function CustomerOrderCard({ order, paymentMethods }: Props) {
   const isActive = order.status !== 'ausgeliefert' && order.status !== 'storniert'
 
   return (
-    <div className={`customer-order-card card fade-in ${isActive ? 'customer-order-active' : ''}`}>
+    <div className={`customer-order-card card ${isActive ? 'customer-order-active' : ''}`}>
       <div className="customer-order-header">
         <div className="customer-order-meta">
           <span className="order-id">{order.id}</span>

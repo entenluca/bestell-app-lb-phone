@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type {
   AppMode,
   CartItem,
@@ -65,6 +65,11 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [loadError, setLoadError] = useState(false)
   const [confirmedOrder, setConfirmedOrder] = useState<{ id: string; total: number } | null>(null)
+  const modeRef = useRef<AppMode>(mode)
+
+  useEffect(() => {
+    modeRef.current = mode
+  }, [mode])
 
   useEffect(() => {
     if (isBrowser) return
@@ -96,6 +101,7 @@ export default function App() {
       setStats(data.stats)
     })
     onNuiEvent<Order[]>('ordersUpdated', (data) => {
+      if (modeRef.current !== 'staff') return
       setOrders(data)
       setStats(computeStats(data))
     })
@@ -252,12 +258,61 @@ export default function App() {
 
   useEffect(() => {
     if (mode === 'staff') refreshOrders()
-  }, [mode, staffView, refreshOrders])
+  }, [mode, refreshOrders])
 
   const activeMyOrdersCount = useMemo(
     () => myOrders.filter((o) => o.status !== 'ausgeliefert' && o.status !== 'storniert').length,
     [myOrders]
   )
+
+  const staffNewOrdersCount = useMemo(
+    () => orders.filter((o) => o.status === 'neu').length,
+    [orders]
+  )
+
+  const staffDeliveryCount = useMemo(
+    () => orders.filter((o) => o.status === 'bereit' || o.status === 'unterwegs').length,
+    [orders]
+  )
+
+  const customerNavItems = useMemo(
+    () => [
+      { id: 'home', label: 'Speisekarte', icon: 'utensils' },
+      {
+        id: 'orders',
+        label: 'Bestellungen',
+        icon: 'orders',
+        badge: activeMyOrdersCount,
+      },
+    ],
+    [activeMyOrdersCount]
+  )
+
+  const staffNavItems = useMemo(
+    () => [
+      { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+      {
+        id: 'orders',
+        label: 'Bestellungen',
+        icon: 'orders',
+        badge: staffNewOrdersCount,
+      },
+      {
+        id: 'deliveries',
+        label: 'Auslieferung',
+        icon: 'delivery',
+        badge: staffDeliveryCount,
+      },
+    ],
+    [staffNewOrdersCount, staffDeliveryCount]
+  )
+
+  const openCart = useCallback(() => setCustomerView('cart'), [])
+  const openOrders = useCallback(() => setCustomerView('orders'), [])
+  const openHome = useCallback(() => setCustomerView('home'), [])
+  const openCheckout = useCallback(() => setCustomerView('checkout'), [])
+  const switchStaff = useCallback(() => setMode('staff'), [])
+  const switchCustomer = useCallback(() => setMode('customer'), [])
 
   const showCustomerNav = mode === 'customer' && (customerView === 'home' || customerView === 'orders')
   const hasBottomNav = showCustomerNav || mode === 'staff'
@@ -293,9 +348,9 @@ export default function App() {
                 cartCount={cartCount}
                 activeOrdersCount={activeMyOrdersCount}
                 onAddToCart={addToCart}
-                onOpenCart={() => setCustomerView('cart')}
-                onOpenOrders={() => setCustomerView('orders')}
-                onSwitchStaff={() => setMode('staff')}
+                onOpenCart={openCart}
+                onOpenOrders={openOrders}
+                onSwitchStaff={switchStaff}
                 isStaff={initData.isStaff}
               />
             )}
@@ -303,10 +358,10 @@ export default function App() {
               <CartPage
                 cart={cart}
                 restaurant={initData.restaurant}
-                onBack={() => setCustomerView('home')}
+                onBack={openHome}
                 onUpdateQuantity={updateQuantity}
                 onRemove={removeFromCart}
-                onCheckout={() => setCustomerView('checkout')}
+                onCheckout={openCheckout}
               />
             )}
             {customerView === 'checkout' && (
@@ -348,7 +403,7 @@ export default function App() {
             {staffView === 'dashboard' && (
               <DashboardPage
                 stats={stats}
-                onSwitchCustomer={() => setMode('customer')}
+                onSwitchCustomer={switchCustomer}
               />
             )}
             {staffView === 'orders' && (
@@ -375,15 +430,7 @@ export default function App() {
         <BottomNav
           active={customerView === 'orders' ? 'orders' : 'home'}
           onChange={(id) => setCustomerView(id as CustomerView)}
-          items={[
-            { id: 'home', label: 'Speisekarte', icon: 'utensils' },
-            {
-              id: 'orders',
-              label: 'Bestellungen',
-              icon: 'orders',
-              badge: activeMyOrdersCount,
-            },
-          ]}
+          items={customerNavItems}
         />
       )}
 
@@ -391,21 +438,7 @@ export default function App() {
         <BottomNav
           active={staffView}
           onChange={(id) => setStaffView(id as StaffView)}
-          items={[
-            { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-            {
-              id: 'orders',
-              label: 'Bestellungen',
-              icon: 'orders',
-              badge: orders.filter((o) => o.status === 'neu').length,
-            },
-            {
-              id: 'deliveries',
-              label: 'Auslieferung',
-              icon: 'delivery',
-              badge: orders.filter((o) => o.status === 'bereit' || o.status === 'unterwegs').length,
-            },
-          ]}
+          items={staffNavItems}
         />
       )}
 
