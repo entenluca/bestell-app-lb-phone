@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import type { CartItem, PaymentMethod, Restaurant } from '../types'
+import { useEffect, useState } from 'react'
+import type { CartItem, DeliveryLocation, PaymentMethod, Restaurant } from '../types'
 import { formatPrice } from '../utils/nui'
 import { PageHeader } from '../components/PageHeader'
+import { DeliveryMapPicker } from '../components/DeliveryMapPicker'
+import { Icon } from '../components/Icon'
 
 interface Props {
   cart: CartItem[]
@@ -12,6 +14,7 @@ interface Props {
     customerName: string
     phone: string
     address: string
+    coords: { x: number; y: number; z: number }
     note: string
     paymentMethod: string
     items: { id: string; name: string; price: number; quantity: number }[]
@@ -29,19 +32,30 @@ export function CheckoutPage({
 }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState('')
   const [note, setNote] = useState('')
   const [payment, setPayment] = useState(paymentMethods[0]?.id ?? 'cash')
+  const [deliveryLocation, setDeliveryLocation] = useState<DeliveryLocation | null>(null)
+
+  useEffect(() => {
+    if (typeof window.getSettings === 'function') {
+      window.getSettings().then((settings) => {
+        if (settings?.name) setName(settings.name)
+      })
+    }
+  }, [])
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal + restaurant.deliveryFee
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!deliveryLocation) return
+
     onSubmit({
       customerName: name,
       phone,
-      address,
+      address: deliveryLocation.address,
+      coords: { x: deliveryLocation.x, y: deliveryLocation.y, z: deliveryLocation.z },
       note,
       paymentMethod: payment,
       items: cart.map((item) => ({
@@ -58,8 +72,15 @@ export function CheckoutPage({
       <PageHeader title="Checkout" onBack={onBack} />
 
       <form onSubmit={handleSubmit} className="checkout-form">
+        <DeliveryMapPicker
+          location={deliveryLocation}
+          onLocationChange={setDeliveryLocation}
+        />
+
         <div className="form-group">
-          <label htmlFor="name">Name *</label>
+          <label htmlFor="name">
+            <Icon name="orders" size={14} /> Name *
+          </label>
           <input
             id="name"
             type="text"
@@ -71,7 +92,9 @@ export function CheckoutPage({
         </div>
 
         <div className="form-group">
-          <label htmlFor="phone">Telefonnummer *</label>
+          <label htmlFor="phone">
+            <Icon name="phone" size={14} /> Telefonnummer *
+          </label>
           <input
             id="phone"
             type="tel"
@@ -83,19 +106,9 @@ export function CheckoutPage({
         </div>
 
         <div className="form-group">
-          <label htmlFor="address">Lieferadresse *</label>
-          <input
-            id="address"
-            type="text"
-            placeholder="Straße, Hausnummer, Stadt"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="note">Hinweis zur Bestellung</label>
+          <label htmlFor="note">
+            <Icon name="message" size={14} /> Hinweis zur Bestellung
+          </label>
           <textarea
             id="note"
             placeholder="z.B. Klingeln, Etage, Allergien..."
@@ -132,38 +145,14 @@ export function CheckoutPage({
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
+        <button
+          type="submit"
+          className="btn btn-primary btn-lg"
+          disabled={loading || !deliveryLocation}
+        >
           {loading ? 'Wird gesendet...' : 'Bestellung abschicken'}
         </button>
       </form>
-
-      <style>{`
-        .checkout-form {
-          padding: 16px;
-        }
-        .checkout-summary {
-          padding: 14px;
-          margin-bottom: 16px;
-        }
-        .checkout-summary .summary-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 4px 0;
-          font-size: 14px;
-          color: var(--text-secondary);
-        }
-        .checkout-summary .summary-row.total {
-          font-size: 18px;
-          font-weight: 800;
-          color: var(--text);
-          border-top: 1px solid var(--border);
-          margin-top: 8px;
-          padding-top: 10px;
-        }
-        .checkout-summary .summary-row.total span:last-child {
-          color: var(--primary);
-        }
-      `}</style>
     </div>
   )
 }

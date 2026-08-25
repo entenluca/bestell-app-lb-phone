@@ -1,4 +1,5 @@
 import { formatPrice } from '../utils/nui'
+import { Icon } from '../components/Icon'
 
 interface Props {
   orderId: string
@@ -10,7 +11,9 @@ export function ConfirmationPage({ orderId, total, onBackHome }: Props) {
   return (
     <div className="confirmation-page fade-in">
       <div className="confirmation-content">
-        <div className="confirmation-icon">✅</div>
+        <div className="confirmation-icon success-icon">
+          <Icon name="check" size={40} />
+        </div>
         <h1>Bestellung bestätigt!</h1>
         <p className="confirmation-sub">Vielen Dank für deine Bestellung</p>
 
@@ -26,59 +29,13 @@ export function ConfirmationPage({ orderId, total, onBackHome }: Props) {
         </div>
 
         <p className="confirmation-info">
-          Dein Essen wird zubereitet und in ca. 25–35 Minuten geliefert.
+          Dein Essen wird zubereitet und an deinen Standort geliefert (ca. 25–35 Min.).
         </p>
 
-        <button className="btn btn-primary btn-lg" onClick={onBackHome}>
+        <button type="button" className="btn btn-primary btn-lg" onClick={onBackHome}>
           Zurück zur Startseite
         </button>
       </div>
-
-      <style>{`
-        .confirmation-page {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 100%;
-          padding: 24px;
-        }
-        .confirmation-content {
-          text-align: center;
-          max-width: 320px;
-        }
-        .confirmation-icon {
-          font-size: 64px;
-          margin-bottom: 16px;
-        }
-        .confirmation-content h1 {
-          font-size: 22px;
-          font-weight: 800;
-          margin-bottom: 4px;
-        }
-        .confirmation-sub {
-          color: var(--text-secondary);
-          margin-bottom: 24px;
-        }
-        .confirmation-card {
-          padding: 16px;
-          margin-bottom: 16px;
-          text-align: left;
-        }
-        .conf-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 8px 0;
-          font-size: 14px;
-        }
-        .conf-row strong {
-          color: var(--primary);
-        }
-        .confirmation-info {
-          font-size: 13px;
-          color: var(--text-secondary);
-          margin-bottom: 24px;
-        }
-      `}</style>
     </div>
   )
 }

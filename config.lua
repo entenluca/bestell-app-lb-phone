@@ -146,12 +146,12 @@ Config.Menu = {
 }
 
 Config.Categories = {
-    { id = "burger", label = "Burger", icon = "🍔" },
-    { id = "pizza", label = "Pizza", icon = "🍕" },
-    { id = "pasta", label = "Pasta", icon = "🍝" },
-    { id = "salate", label = "Salate", icon = "🥗" },
-    { id = "getraenke", label = "Getränke", icon = "🥤" },
-    { id = "desserts", label = "Desserts", icon = "🍰" },
+    { id = "burger", label = "Burger", icon = "utensils" },
+    { id = "pizza", label = "Pizza", icon = "pizza" },
+    { id = "pasta", label = "Pasta", icon = "pasta" },
+    { id = "salate", label = "Salate", icon = "salate" },
+    { id = "getraenke", label = "Getränke", icon = "getraenke" },
+    { id = "desserts", label = "Desserts", icon = "desserts" },
 }
 
 Config.PaymentMethods = {

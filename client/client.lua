@@ -83,6 +83,36 @@ RegisterNUICallback("markDelivered", function(data, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("getPlayerLocation", function(_, cb)
+    local ped = PlayerPedId()
+    local coords = GetEntityCoords(ped)
+    local streetHash, crossingHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+    local street = GetStreetNameFromHashKey(streetHash)
+    local crossing = GetStreetNameFromHashKey(crossingHash)
+
+    local address = street
+    if crossing and crossing ~= "" then
+        address = street .. " / " .. crossing
+    end
+    if not address or address == "" then
+        address = string.format("Position (%.0f, %.0f)", coords.x, coords.y)
+    end
+
+    cb({
+        x = coords.x,
+        y = coords.y,
+        z = coords.z,
+        address = address,
+    })
+end)
+
+RegisterNUICallback("setDeliveryWaypoint", function(data, cb)
+    if data and data.x and data.y then
+        SetNewWaypoint(data.x + 0.0, data.y + 0.0)
+    end
+    cb("ok")
+end)
+
 -- Server Events
 RegisterNetEvent("alpp-food:staffStatus", function(isStaff)
     sendAppMessage("staffStatus", { isStaff = isStaff })

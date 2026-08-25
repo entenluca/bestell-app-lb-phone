@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { Icon } from './Icon'
 
 interface Props {
   title: string
@@ -11,7 +12,7 @@ export function PageHeader({ title, onBack, right }: Props) {
     <header className="page-header">
       {onBack && (
         <button className="back-btn" onClick={onBack} aria-label="Zurück">
-          ←
+          <Icon name="back" size={20} />
         </button>
       )}
       <h1>{title}</h1>

@@ -75,12 +75,12 @@ export const mockInitData: InitData = {
     },
   ] as MenuItem[],
   categories: [
-    { id: 'burger', label: 'Burger', icon: '🍔' },
-    { id: 'pizza', label: 'Pizza', icon: '🍕' },
-    { id: 'pasta', label: 'Pasta', icon: '🍝' },
-    { id: 'salate', label: 'Salate', icon: '🥗' },
-    { id: 'getraenke', label: 'Getränke', icon: '🥤' },
-    { id: 'desserts', label: 'Desserts', icon: '🍰' },
+    { id: 'burger', label: 'Burger', icon: 'utensils' },
+    { id: 'pizza', label: 'Pizza', icon: 'pizza' },
+    { id: 'pasta', label: 'Pasta', icon: 'pasta' },
+    { id: 'salate', label: 'Salate', icon: 'salate' },
+    { id: 'getraenke', label: 'Getränke', icon: 'getraenke' },
+    { id: 'desserts', label: 'Desserts', icon: 'desserts' },
   ] as Category[],
   paymentMethods: [
     { id: 'cash', label: 'Barzahlung bei Lieferung' },
@@ -98,6 +98,7 @@ export const mockOrders: Order[] = [
     customerName: 'Max Mustermann',
     phone: '555-0142',
     address: 'Vinewood Blvd 12, Los Santos',
+    coords: { x: 312.5, y: -218.2, z: 54.0 },
     note: 'Bitte klingeln',
     paymentMethod: 'cash',
     items: [
@@ -115,6 +116,7 @@ export const mockOrders: Order[] = [
     customerName: 'Anna Schmidt',
     phone: '555-0891',
     address: 'Grove Street 5, Los Santos',
+    coords: { x: -47.2, y: -1757.8, z: 29.4 },
     note: '',
     paymentMethod: 'card',
     items: [
@@ -132,6 +134,7 @@ export const mockOrders: Order[] = [
     customerName: 'Tom Weber',
     phone: '555-0333',
     address: 'Del Perro Pier, Los Santos',
+    coords: { x: -1850.3, y: -1232.1, z: 13.0 },
     note: 'Am Eingang warten',
     paymentMethod: 'phone',
     items: [

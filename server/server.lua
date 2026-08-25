@@ -139,6 +139,11 @@ RegisterNetEvent("alpp-food:createOrder", function(orderData)
         return
     end
 
+    if not orderData.coords or not orderData.coords.x or not orderData.coords.y then
+        TriggerClientEvent("alpp-food:orderResult", src, { success = false, message = "Bitte Lieferpunkt auf der Karte setzen." })
+        return
+    end
+
     if not orderData.address or orderData.address == "" then
         TriggerClientEvent("alpp-food:orderResult", src, { success = false, message = "Bitte Lieferadresse angeben." })
         return
@@ -159,6 +164,7 @@ RegisterNetEvent("alpp-food:createOrder", function(orderData)
         customerName = orderData.customerName,
         phone = orderData.phone,
         address = orderData.address,
+        coords = orderData.coords,
         note = orderData.note or "",
         paymentMethod = orderData.paymentMethod or "cash",
         items = orderData.items,
@@ -236,6 +242,7 @@ CreateThread(function()
                 customerName = "Max Mustermann",
                 phone = "555-0142",
                 address = "Vinewood Blvd 12, Los Santos",
+                coords = { x = 312.5, y = -218.2, z = 54.0 },
                 note = "Bitte klingeln",
                 paymentMethod = "cash",
                 items = {
@@ -253,6 +260,7 @@ CreateThread(function()
                 customerName = "Anna Schmidt",
                 phone = "555-0891",
                 address = "Grove Street 5, Los Santos",
+                coords = { x = -47.2, y = -1757.8, z = 29.4 },
                 note = "",
                 paymentMethod = "card",
                 items = {
@@ -270,6 +278,7 @@ CreateThread(function()
                 customerName = "Tom Weber",
                 phone = "555-0333",
                 address = "Del Perro Pier, Los Santos",
+                coords = { x = -1850.3, y = -1232.1, z = 13.0 },
                 note = "Am Eingang warten",
                 paymentMethod = "phone",
                 items = {

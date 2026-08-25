@@ -35,6 +35,8 @@ export function OrdersPage({
     return o.status === filter
   })
 
+  const newCount = orders.filter((o) => o.status === 'neu').length
+
   return (
     <div className="orders-page fade-in">
       <PageHeader title="Bestellungen" />
@@ -43,14 +45,13 @@ export function OrdersPage({
         {filters.map((f) => (
           <button
             key={f.id}
+            type="button"
             className={`filter-pill ${filter === f.id ? 'active' : ''}`}
             onClick={() => setFilter(f.id)}
           >
             {f.label}
-            {f.id === 'neu' && orders.filter((o) => o.status === 'neu').length > 0 && (
-              <span className="filter-count">
-                {orders.filter((o) => o.status === 'neu').length}
-              </span>
+            {f.id === 'neu' && newCount > 0 && (
+              <span className="filter-count">{newCount}</span>
             )}
           </button>
         ))}
@@ -59,7 +60,6 @@ export function OrdersPage({
       <div className="orders-list">
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📋</div>
             <h3>Keine Bestellungen</h3>
             <p>
               {filter === 'active'
@@ -79,52 +79,6 @@ export function OrdersPage({
           ))
         )}
       </div>
-
-      <style>{`
-        .filter-scroll {
-          display: flex;
-          gap: 6px;
-          padding: 10px 16px;
-          overflow-x: auto;
-        }
-        .filter-pill {
-          flex-shrink: 0;
-          padding: 6px 14px;
-          border-radius: 16px;
-          background: var(--surface);
-          border: 1.5px solid var(--border);
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--text-secondary);
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .filter-pill.active {
-          background: var(--primary);
-          border-color: var(--primary);
-          color: white;
-        }
-        .filter-count {
-          background: white;
-          color: var(--primary);
-          font-size: 10px;
-          font-weight: 800;
-          min-width: 18px;
-          height: 18px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .filter-pill.active .filter-count {
-          background: rgba(255,255,255,0.3);
-          color: white;
-        }
-        .orders-list {
-          padding: 0 16px 16px;
-        }
-      `}</style>
     </div>
   )
 }

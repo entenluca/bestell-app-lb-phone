@@ -40,7 +40,6 @@ export function DeliveriesPage({
       <div className="orders-list">
         {deliveryOrders.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">🚚</div>
             <h3>Keine Auslieferungen</h3>
             <p>Alle Bestellungen wurden ausgeliefert.</p>
           </div>
@@ -57,32 +56,6 @@ export function DeliveriesPage({
           ))
         )}
       </div>
-
-      <style>{`
-        .delivery-stats {
-          display: flex;
-          gap: 10px;
-          padding: 12px 16px;
-        }
-        .delivery-stat {
-          flex: 1;
-          text-align: center;
-          padding: 14px;
-        }
-        .ds-value {
-          display: block;
-          font-size: 28px;
-          font-weight: 800;
-        }
-        .ds-label {
-          font-size: 12px;
-          color: var(--text-secondary);
-          font-weight: 500;
-        }
-        .orders-list {
-          padding: 0 16px 16px;
-        }
-      `}</style>
     </div>
   )
 }

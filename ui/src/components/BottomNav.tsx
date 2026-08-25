@@ -1,3 +1,5 @@
+import { Icon } from './Icon'
+
 interface Props {
   items: { id: string; label: string; icon: string; badge?: number }[]
   active: string
@@ -13,7 +15,9 @@ export function BottomNav({ items, active, onChange }: Props) {
           className={`nav-item ${active === item.id ? 'active' : ''}`}
           onClick={() => onChange(item.id)}
         >
-          <span className="nav-icon">{item.icon}</span>
+          <span className="nav-icon">
+            <Icon name={item.icon} size={22} />
+          </span>
           <span>{item.label}</span>
           {item.badge != null && item.badge > 0 && (
             <span className="nav-badge">{item.badge}</span>

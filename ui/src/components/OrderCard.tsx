@@ -1,6 +1,7 @@
 import type { Order, OrderStatus, PaymentMethod } from '../types'
 import { STATUS_COLORS, STATUS_LABELS, STATUS_FLOW } from '../types'
-import { formatPrice, formatTime, getPaymentLabel } from '../utils/nui'
+import { fetchNui, formatPrice, formatTime, getPaymentLabel } from '../utils/nui'
+import { Icon } from './Icon'
 
 interface Props {
   order: Order
@@ -30,6 +31,11 @@ export function OrderCard({
   const canMarkDelivery = order.status === 'bereit' || order.status === 'in_bearbeitung' || order.status === 'neu'
   const isDelivery = order.status === 'bereit' || order.status === 'unterwegs'
 
+  const setWaypoint = () => {
+    if (!order.coords) return
+    fetchNui('setDeliveryWaypoint', { x: order.coords.x, y: order.coords.y })
+  }
+
   return (
     <div className="order-card card fade-in">
       <div className="order-card-header">
@@ -48,13 +54,19 @@ export function OrderCard({
       <div className="order-card-body">
         <div className="order-customer">
           <strong>{order.customerName}</strong>
-          <span>📞 {order.phone}</span>
-          <span>📍 {order.address}</span>
+          <span className="order-info-row">
+            <Icon name="phone" size={14} />
+            {order.phone}
+          </span>
+          <span className="order-info-row">
+            <Icon name="map" size={14} />
+            {order.address}
+          </span>
         </div>
 
         <div className="order-items">
           {order.items.map((item) => (
-            <div key={item.id} className="order-item-row">
+            <div key={`${item.id}-${item.quantity}`} className="order-item-row">
               <span>{item.quantity}x {item.name}</span>
               <span>{formatPrice(item.price * item.quantity)}</span>
             </div>
@@ -62,7 +74,10 @@ export function OrderCard({
         </div>
 
         {order.note && (
-          <div className="order-note">💬 {order.note}</div>
+          <div className="order-note">
+            <Icon name="message" size={14} />
+            {order.note}
+          </div>
         )}
 
         <div className="order-meta">
@@ -73,27 +88,39 @@ export function OrderCard({
 
       {!compact && order.status !== 'ausgeliefert' && order.status !== 'storniert' && (
         <div className="order-actions">
+          {order.coords && (
+            <button type="button" className="btn btn-secondary btn-sm waypoint-btn" onClick={setWaypoint}>
+              <Icon name="navigation" size={16} />
+              Route setzen
+            </button>
+          )}
+
           {canMarkDelivery && onMarkDelivery && (
-            <button className="btn btn-delivery" onClick={() => onMarkDelivery(order.id)}>
-              🚚 Zur Auslieferung
+            <button type="button" className="btn btn-delivery" onClick={() => onMarkDelivery(order.id)}>
+              <Icon name="truck" size={18} />
+              Zur Auslieferung
             </button>
           )}
 
           {showDeliveryActions && order.status === 'unterwegs' && onMarkDelivered && (
-            <button className="btn btn-delivered" onClick={() => onMarkDelivered(order.id)}>
-              ✓ Ausgeliefert
+            <button type="button" className="btn btn-delivered" onClick={() => onMarkDelivered(order.id)}>
+              <Icon name="check" size={18} />
+              Ausgeliefert
             </button>
           )}
 
           {onStatusChange && nextStatus && !showDeliveryActions && (
             <div className="status-actions">
               <button
+                type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => onStatusChange(order.id, nextStatus)}
               >
-                → {STATUS_LABELS[nextStatus]}
+                <Icon name="next" size={14} />
+                {STATUS_LABELS[nextStatus]}
               </button>
               <button
+                type="button"
                 className="btn btn-ghost btn-sm"
                 onClick={() => onStatusChange(order.id, 'storniert')}
               >
@@ -104,6 +131,7 @@ export function OrderCard({
 
           {onStatusChange && !nextStatus && (
             <button
+              type="button"
               className="btn btn-ghost btn-sm"
               onClick={() => onStatusChange(order.id, 'storniert')}
             >
@@ -115,89 +143,12 @@ export function OrderCard({
 
       {showDeliveryActions && isDelivery && order.status === 'bereit' && onMarkDelivered && (
         <div className="order-actions">
-          <button className="btn btn-delivered" onClick={() => onMarkDelivered(order.id)}>
-            ✓ Ausgeliefert
+          <button type="button" className="btn btn-delivered" onClick={() => onMarkDelivered(order.id)}>
+            <Icon name="check" size={18} />
+            Ausgeliefert
           </button>
         </div>
       )}
-
-      <style>{`
-        .order-card {
-          margin-bottom: 12px;
-        }
-        .order-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          padding: 14px 14px 0;
-        }
-        .order-id {
-          font-weight: 800;
-          font-size: 15px;
-          display: block;
-        }
-        .order-time {
-          font-size: 12px;
-          color: var(--text-secondary);
-        }
-        .order-card-body {
-          padding: 12px 14px;
-        }
-        .order-customer {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          font-size: 13px;
-          margin-bottom: 10px;
-        }
-        .order-customer strong {
-          font-size: 14px;
-        }
-        .order-items {
-          background: var(--bg);
-          border-radius: var(--radius-sm);
-          padding: 10px;
-          margin-bottom: 8px;
-        }
-        .order-item-row {
-          display: flex;
-          justify-content: space-between;
-          font-size: 13px;
-          padding: 2px 0;
-        }
-        .order-note {
-          font-size: 12px;
-          color: var(--text-secondary);
-          background: var(--primary-light);
-          padding: 8px 10px;
-          border-radius: var(--radius-sm);
-          margin-bottom: 8px;
-        }
-        .order-meta {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 13px;
-          padding-top: 4px;
-        }
-        .order-meta strong {
-          font-size: 16px;
-          color: var(--primary);
-        }
-        .order-actions {
-          padding: 0 14px 14px;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .status-actions {
-          display: flex;
-          gap: 8px;
-        }
-        .status-actions .btn-secondary {
-          flex: 1;
-        }
-      `}</style>
     </div>
   )
 }

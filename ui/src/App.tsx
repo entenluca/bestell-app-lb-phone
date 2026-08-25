@@ -20,6 +20,7 @@ import { ConfirmationPage } from './pages/ConfirmationPage'
 import { DashboardPage } from './pages/staff/DashboardPage'
 import { OrdersPage } from './pages/staff/OrdersPage'
 import { DeliveriesPage } from './pages/staff/DeliveriesPage'
+import { Icon } from './components/Icon'
 
 const isBrowser = !(window as any).invokeNative
 
@@ -148,6 +149,7 @@ export default function App() {
             customerName: data.customerName,
             phone: data.phone,
             address: data.address,
+            coords: data.coords,
             note: data.note,
             paymentMethod: data.paymentMethod,
             items: data.items,
@@ -229,7 +231,9 @@ export default function App() {
     return (
       <div className="app">
         <div className="empty-state" style={{ marginTop: '40%' }}>
-          <div className="empty-icon pulse">🍽️</div>
+          <div className="empty-icon pulse">
+            <Icon name="utensils" size={48} />
+          </div>
           <h3>{loadError ? 'App konnte nicht geladen werden' : 'Wird geladen...'}</h3>
           {loadError && (
             <p style={{ marginTop: 8, fontSize: 13 }}>
@@ -324,17 +328,17 @@ export default function App() {
           active={staffView}
           onChange={(id) => setStaffView(id as StaffView)}
           items={[
-            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
             {
               id: 'orders',
               label: 'Bestellungen',
-              icon: '📋',
+              icon: 'orders',
               badge: orders.filter((o) => o.status === 'neu').length,
             },
             {
               id: 'deliveries',
               label: 'Auslieferung',
-              icon: '🚚',
+              icon: 'delivery',
               badge: orders.filter((o) => o.status === 'bereit' || o.status === 'unterwegs').length,
             },
           ]}

@@ -21,6 +21,13 @@ export interface Category {
   icon: string
 }
 
+export interface DeliveryLocation {
+  x: number
+  y: number
+  z: number
+  address: string
+}
+
 export interface CartItem extends MenuItem {
   quantity: number
 }
@@ -52,6 +59,7 @@ export interface Order {
   customerName: string
   phone: string
   address: string
+  coords?: { x: number; y: number; z: number }
   note: string
   paymentMethod: string
   items: OrderItem[]
